@@ -11,7 +11,7 @@ namespace Sim_Driver_config_app
     public class Motor : INotifyPropertyChanged
     {
 
-        private byte _ID = 100;
+        private byte _ID = 0;
         public byte ID
         {
             get { return _ID; }
@@ -23,7 +23,7 @@ namespace Sim_Driver_config_app
             }
         }
 
-        private double _kp = 100;
+        private double _kp = 10;
         public double kp
         {
             get { return _kp; }
@@ -35,7 +35,7 @@ namespace Sim_Driver_config_app
             }
         }
 
-        private double _ki = 10;
+        private double _ki = 5;
         public double ki
         {
             get { return _ki; }
@@ -47,7 +47,7 @@ namespace Sim_Driver_config_app
             }
         }
 
-        private double _kd = 0;
+        private double _kd = 2;
         public double kd
         {
             get { return _kd; }
@@ -67,6 +67,18 @@ namespace Sim_Driver_config_app
             {
                 if (value == _RawPosition) return;
                 _RawPosition = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private UInt16 _Target = 65353/2;
+        public Double Target
+        {
+            get { return _Target; }
+            set
+            {
+                if (value == _Target) return;
+                _Target = Convert.ToUInt16(value);
                 NotifyPropertyChanged();
             }
         }
