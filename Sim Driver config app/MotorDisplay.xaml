@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Sim_Driver_config_app.MotorDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sim_Driver_config_app"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="500">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Motor ID:"/>
+                <Label Content="{Binding Path=ID}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Kp:" Width="30"/>
+                <Label Content="{Binding Path=kp}" Width="50"/>
+                <Slider HorizontalAlignment="Stretch" Margin="2,2,2,2" Width="400"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Ki:" Width="30"/>
+                <Label Content="{Binding Path=ki}" Width="50"/>
+                <Slider HorizontalAlignment="Stretch" Margin="2,2,2,2" Width="400"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Kd:" Width="30"/>
+                <Label Content="{Binding Path=kd}" Width="50"/>
+                <Slider HorizontalAlignment="Stretch" Margin="2,2,2,2" Width="400"/>
+            </StackPanel>
+        </StackPanel>
+            
+    </Grid>
+</UserControl>

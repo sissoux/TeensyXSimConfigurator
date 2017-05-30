@@ -1,0 +1,23 @@
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\bin\Debug\Sim Driver config app.exe.config
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\bin\Debug\Sim Driver config app.exe
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\bin\Debug\Sim Driver config app.pdb
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app.csprojResolveAssemblyReference.cache
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\MainWindow.g.cs
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\App.g.cs
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app_MarkupCompile.cache
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app_MarkupCompile.lref
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\MainWindow.baml
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app.g.resources
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim_Driver_config_app.Properties.Resources.resources
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app.csproj.GenerateResource.Cache
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app.exe
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\Sim Driver config app.pdb
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\bin\Debug\Newtonsoft.Json.dll
+c:\users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\bin\Debug\Newtonsoft.Json.xml
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\xyGraph.g.cs
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\xyGraph.baml
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\SerialConnector.g.cs
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\SerialConnector.baml
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\MotorDisplay.g.cs
+C:\Users\te247921\documents\visual studio 2017\Projects\Sim Driver config app\Sim Driver config app\obj\Debug\MotorDisplay.baml
