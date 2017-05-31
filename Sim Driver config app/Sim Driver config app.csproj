@@ -63,6 +63,7 @@
     <Compile Include="MotorDisplay.xaml.cs">
       <DependentUpon>MotorDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MyConverters.cs" />
     <Compile Include="SerialConnector.xaml.cs">
       <DependentUpon>SerialConnector.xaml</DependentUpon>
     </Compile>

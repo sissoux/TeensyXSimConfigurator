@@ -71,6 +71,8 @@ namespace Sim_Driver_config_app
             }
         }
 
+        public bool NewPosition = false;
+
         private UInt16 _Target = 65353/2;
         public Double Target
         {
@@ -79,6 +81,7 @@ namespace Sim_Driver_config_app
             {
                 if (value == _Target) return;
                 _Target = Convert.ToUInt16(value);
+                NewPosition = true;
                 NotifyPropertyChanged();
             }
         }

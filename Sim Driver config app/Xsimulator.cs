@@ -32,6 +32,19 @@ namespace Sim_Driver_config_app
             }
         }
 
+        private bool liveMode = false;
+
+        public bool LiveMode
+        {
+            get { return liveMode; }
+            set
+            {
+                if (value == liveMode) return;
+                liveMode = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private string firmRevision = "Firmware revision:";
 
         public string FirmRevision

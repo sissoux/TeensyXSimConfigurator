@@ -7,6 +7,54 @@ using System.Threading.Tasks;
 
 namespace Sim_Driver_config_app
 {
+
+    [DataContract]
+    public class Command
+    {
+        [DataMember]
+        internal string Cmd;
+
+        [DataMember]
+        internal byte Id;
+
+        [DataMember]
+        UInt16 Span;
+
+        [DataMember]
+        internal List<MotorInfo> MotorInfoList = new List<MotorInfo>();
+
+        public Command(string Cmd)
+        {
+            this.Cmd = Cmd;
+        }
+
+        public Command(string Cmd, List<Motor> MotorList)
+        {
+            this.Cmd = Cmd;
+            if (MotorList.Count == 2)
+            {
+                MotorInfo m1 = new MotorInfo();
+                MotorInfo m2 = new MotorInfo();
+                
+                this.MotorInfoList.Add(m1);
+                this.MotorInfoList.Add(m2);
+
+                for (int i = 0; i<2; i++)
+                {
+                    MotorInfoList[i].ID = MotorList[i].ID;
+                    MotorInfoList[i].kp = MotorList[i].kp;
+                    MotorInfoList[i].ki = MotorList[i].ki;
+                    MotorInfoList[i].kd = MotorList[i].kd;
+                    MotorInfoList[i].target = MotorList[i].TargetInt;
+                    MotorInfoList[i].HighLimit = MotorList[i].HighLimit;
+                    MotorInfoList[i].LowLimit = MotorList[i].LowLimit;
+                    MotorInfoList[i].Offset = MotorList[i].Offset;
+                }
+            }
+            
+        }
+    }
+
     [DataContract]
     public class CaptureData
     {
@@ -42,6 +90,17 @@ namespace Sim_Driver_config_app
         [DataMember(Name = "kd")]
         internal double kd;
 
+        [DataMember(Name = "target")]
+        internal UInt16 target;
+
+        [DataMember(Name = "HL")]
+        internal UInt16 HighLimit;
+
+        [DataMember(Name = "LL")]
+        internal UInt16 LowLimit;
+
+        [DataMember(Name = "Offset")]
+        internal UInt16 Offset;
     }
 
     [DataContract]

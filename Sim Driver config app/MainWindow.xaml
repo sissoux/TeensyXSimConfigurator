@@ -14,7 +14,7 @@
         <System:Double x:Key="kiMax">100</System:Double>
         <System:Double x:Key="kdMax">100</System:Double>
     </Window.Resources>
-    <Grid Background="LightGreen">
+    <Grid Background="LightGray">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="660"/>
@@ -33,7 +33,11 @@
         </StackPanel>
         
         <local:xyGraph x:Name="MyXYGraph" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
-        <local:SerialConnector x:Name="MainSerial" />
+        <StackPanel Orientation="Horizontal">
+            <local:SerialConnector x:Name="MainSerial" />
+            <CheckBox VerticalAlignment="Center" Content="Live update" x:Name="LiveCheckbox" IsChecked="{Binding Path=LiveMode}" Margin="10,0,0,0" />
+
+        </StackPanel>
         <Button x:Name="Send_button" Content="Send Test Data" Grid.Column="1" HorizontalAlignment="Left" Margin="10,2,0,1" VerticalAlignment="Center" Width="100" Click="Send_button_Click" />
         <TextBlock Grid.Row="3" x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
         <Canvas x:Name="mycanvas"/>

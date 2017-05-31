@@ -21,18 +21,22 @@ using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Sim_Driver_config_app;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sim_Driver_config_app
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
+    
     public partial class MainWindow : Window
     {
         SerialPort myPort = new SerialPort();
-        string SimDriverFirmwareVersion = "2.00";
-        volatile string SerialBuffer;
+        volatile static string SerialBuffer;
+        volatile static bool NewFullFrameFlag = false;
         volatile Xsimulator mySim = new Xsimulator();
+        int Counter = 0;
 
         public MainWindow()
         {
@@ -41,26 +45,75 @@ namespace Sim_Driver_config_app
             DataDisplay.DataContext = mySim;
             MotorDisplay1.DataContext = mySim.Motors[0];
             MotorDisplay2.DataContext = mySim.Motors[1];
+            LiveCheckbox.DataContext = mySim;
             MainSerial.Port = myPort;
             myPort.DataReceived += new SerialDataReceivedEventHandler(MyDataReceivedHandler);
+
+            var dueTime = TimeSpan.FromMilliseconds(100);
+            var interval = TimeSpan.FromMilliseconds(100);
+            RunPeriodicAsync(OnTick, dueTime, interval, CancellationToken.None);
+
         }
 
-        void MyDataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private void OnTick()
         {
-            int count = myPort.BytesToRead;
+            if (NewFullFrameFlag)
+            {
+                NewFullFrameFlag = false;
+                handleJson();
+            }
+            if (mySim.LiveMode)
+            {
+                if (mySim.Motors[0].NewPosition || mySim.Motors[1].NewPosition )
+                {
+                    mySim.Motors[0].NewPosition = false;
+                    mySim.Motors[1].NewPosition = false;
+                    Command newMotorParameters = new Command("SetPosition", mySim.Motors);
+                    sendCommand(newMotorParameters);
+                }
+            }
+            Counter++;
+            StatusDisplay.Text = Counter.ToString();
+            //if (liveMode)
+        }
+
+        // The `onTick` method will be called periodically unless cancelled.
+        private static async Task RunPeriodicAsync(Action onTick,
+                                                   TimeSpan dueTime,
+                                                   TimeSpan interval,
+                                                   CancellationToken token)
+        {
+            // Initial wait time before we begin the periodic loop.
+            if (dueTime > TimeSpan.Zero)
+                await Task.Delay(dueTime, token);
+
+            // Repeat this loop until cancelled.
+            while (!token.IsCancellationRequested)
+            {
+                // Call our onTick function.
+                onTick?.Invoke();
+
+                // Wait to repeat again.
+                if (interval > TimeSpan.Zero)
+                    await Task.Delay(interval, token);
+            }
+        }
+
+        private static void MyDataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            SerialPort sp = sender as SerialPort;
+            int count = sp.BytesToRead;
             char[] InBuffer = new char[count];
-            myPort.Read(InBuffer, 0, count);
+            sp.Read(InBuffer, 0, count);
             SerialBuffer = SerialBuffer + new String(InBuffer);
-            bool EOF_Detected = false;
             foreach (char c in InBuffer)
             {
                 if (c == '\r')
                 {
-                    EOF_Detected = true;
+                    NewFullFrameFlag = true;
                     break;
                 }
             }
-            if (EOF_Detected) handleJson();
         }
 
         private void handleJson()
@@ -172,7 +225,7 @@ namespace Sim_Driver_config_app
                     default:
                         break;
                 }
-                Command newMotorParameters = new Command("MotorLimits", ActiveMotor);
+                Command newMotorParameters = new Command("MotorLimits", mySim.Motors);
                 sendCommand(newMotorParameters);
             }
         }
@@ -190,75 +243,6 @@ namespace Sim_Driver_config_app
                 mastring += '\r';
                 myPort.Write(mastring);
             }
-        }
-    }
-
-    public class SliderConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (parameter != null && parameter.ToString() == "%")
-            {
-                double val = System.Convert.ToDouble(value);
-                return parameter.ToString() + (Math.Round((double)val / 655.35, 1)).ToString();
-            }
-            else return (Math.Round((double)value, 2)).ToString();
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            string val = value.ToString();
-            if (value != null && targetType == typeof(double))
-            {
-                return double.Parse(val);
-            }
-            else return 0;
-        }
-    }
-}
-
-[DataContract]
-public class Command
-{
-    [DataMember]
-    internal string Cmd;
-
-    [DataMember]
-    internal byte Id;
-
-    [DataMember(Name = "HL")]
-    internal UInt16 HighLimit;
-
-    [DataMember(Name = "LL")]
-    internal UInt16 LowLimit;
-
-    [DataMember(Name = "Offset")]
-    internal UInt16 Offset;
-
-    [DataMember]
-    UInt16 Span;
-
-    public Command(string Cmd)
-    {
-        this.Cmd = Cmd;
-    }
-
-    public Command(string Cmd, Motor mot)
-    {
-        this.Cmd = Cmd;
-        switch (Cmd)
-        {
-            case "MotorLimits":
-                this.Id = mot.ID;
-                this.HighLimit = mot.HighLimit;
-                this.LowLimit = mot.LowLimit;
-                this.Offset = mot.Offset;
-                break;
-
-
-            default:
-                break;
         }
     }
 
