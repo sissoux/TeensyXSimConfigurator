@@ -37,40 +37,80 @@
         <Button x:Name="Send_button" Content="Send Test Data" Grid.Column="1" HorizontalAlignment="Left" Margin="10,2,0,1" VerticalAlignment="Center" Width="100" Click="Send_button_Click" />
         <TextBlock Grid.Row="3" x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
         <Canvas x:Name="mycanvas"/>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" >
-            <StackPanel x:Name="MotorDisplay1" Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" x:Name="motorInfoPanel">
+            <StackPanel x:Name="MotorDisplay1" Orientation="Vertical" Width="300">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Content="Motor ID:"/>
                     <Label Content="{Binding Path=ID}" Width="30"/>
                     <Label Content="Current position:"/>
                     <Label Content="{Binding Path=RawPostion}" Width="35"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" Margin="0,0,0,0" Height="190">
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Kp" Width="30" HorizontalContentAlignment="Center"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Margin="0,0,0,0" Height="190">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding kp, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kpMax}" LargeChange="0.1" SmallChange="0.01" />
                         <Label Content="{Binding Path=kp, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
-                        <Slider Orientation="Vertical" HorizontalAlignment="Center" Height="{StaticResource SliderHeight}" Value="{Binding kp, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kpMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="Kp" Width="30" HorizontalContentAlignment="Center" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Ki" Width="30" HorizontalContentAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding ki, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kiMax}" LargeChange="0.1" SmallChange="0.01" />
                         <Label Content="{Binding Path=ki, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
-                        <Slider Orientation="Vertical" HorizontalAlignment="Center" Height="{StaticResource SliderHeight}" Value="{Binding ki, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kiMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="Ki" Width="30" HorizontalContentAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Kd" Width="30" HorizontalContentAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding kd, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kdMax}" LargeChange="0.1" SmallChange="0.01" />
                         <Label Content="{Binding Path=kd, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
-                        <Slider Orientation="Vertical" HorizontalAlignment="Center" Height="{StaticResource SliderHeight}" Value="{Binding kd, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kdMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="Kd" Width="30" HorizontalContentAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="SetPpoint" Width="65" HorizontalContentAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding Path=Target, Mode=TwoWay}" Margin="0,0,0,0" Maximum="65535" LargeChange="100" SmallChange="10" />
                         <Label Content="{Binding Path=Target, Converter={StaticResource SliderConv}, ConverterParameter='%'}" Width="50" HorizontalContentAlignment="Center"/>
-                        <Slider Orientation="Vertical" HorizontalAlignment="Center" Height="{StaticResource SliderHeight}" Value="{Binding Path=Target, Mode=TwoWay}" Margin="0,0,0,0" Maximum="65535" LargeChange="100" SmallChange="10" />
+                        <Label Content="SetPpoint" Width="65" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <Button Content="High Limit" Padding="2,0,2,0" Click="ButtonClick" x:Name="High_Limit" CommandParameter="HL" />
+                        <Button Content="Offset" Padding="2,0,2,0"     Click="ButtonClick" x:Name="Offset" CommandParameter="Offset" />
+                        <Button Content="Low Limit" Padding="2,0,2,0"  Click="ButtonClick" x:Name="Low_Limit" CommandParameter="LL" />
+                        <Label Content="Set current position as:" FlowDirection="LeftToRight" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
-                
+
             </StackPanel>
-            <StackPanel x:Name="MotorDisplay2" Orientation="Vertical">
-                
+            <StackPanel x:Name="MotorDisplay2" Orientation="Vertical" Width="300">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Motor ID:"/>
+                    <Label Content="{Binding Path=ID}" Width="30"/>
+                    <Label Content="Current position:"/>
+                    <Label Content="{Binding Path=RawPostion}" Width="35"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Margin="0,0,0,0" Height="190">
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding kp, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kpMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="{Binding Path=kp, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
+                        <Label Content="Kp" Width="30" HorizontalContentAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding ki, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kiMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="{Binding Path=ki, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
+                        <Label Content="Ki" Width="30" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding kd, Mode=TwoWay}" Margin="0,0,0,0" Maximum="{StaticResource kdMax}" LargeChange="0.1" SmallChange="0.01" />
+                        <Label Content="{Binding Path=kd, Converter={StaticResource SliderConv}}" Width="50" HorizontalContentAlignment="Center"/>
+                        <Label Content="Kd" Width="30" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" >
+                        <Slider Orientation="Horizontal" FlowDirection="LeftToRight" HorizontalAlignment="Center" Width="{StaticResource SliderHeight}" Value="{Binding Path=Target, Mode=TwoWay}" Margin="0,0,0,0" Maximum="65535" LargeChange="100" SmallChange="10" />
+                        <Label Content="{Binding Path=Target, Converter={StaticResource SliderConv}, ConverterParameter='%'}" Width="50" HorizontalContentAlignment="Center"/>
+                        <Label Content="SetPpoint" Width="65" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                        <Button Content="High Limit" Padding="2,0,2,0" Click="ButtonClick" CommandParameter="HL" />
+                        <Button Content="Offset" Padding="2,0,2,0"     Click="ButtonClick" CommandParameter="Offset" />
+                        <Button Content="Low Limit" Padding="2,0,2,0"  Click="ButtonClick" CommandParameter="LL" />
+                        <Label Content="Set current position as:" FlowDirection="LeftToRight" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
             </StackPanel>
         </StackPanel>
 

@@ -82,12 +82,25 @@ namespace Sim_Driver_config_app
                 NotifyPropertyChanged();
             }
         }
+        public UInt16 TargetInt
+        {
+            get { return _Target; }
+        }
+
+        public UInt16 HighLimit { get; set; }
+
+        public UInt16 LowLimit { get; set; }
+
+        public UInt16 Offset { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Motor(byte motorID)
         {
             this.ID = motorID;
+            HighLimit = 65535;
+            LowLimit = 0;
+            Offset = 65535 / 2;
         }
 
 

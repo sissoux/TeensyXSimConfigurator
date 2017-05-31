@@ -44,3 +44,26 @@ C:\Users\alexi\Source\Repos\TeensyXSimConfigurator\Sim Driver config app\obj\Deb
 C:\Users\alexi\Source\Repos\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.csproj.GenerateResource.Cache
 C:\Users\alexi\Source\Repos\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.exe
 C:\Users\alexi\Source\Repos\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.pdb
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\bin\Debug\Sim Driver config app.exe.config
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\bin\Debug\Sim Driver config app.exe
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\bin\Debug\Sim Driver config app.pdb
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\bin\Debug\Newtonsoft.Json.dll
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\bin\Debug\Newtonsoft.Json.xml
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.csprojResolveAssemblyReference.cache
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\MainWindow.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\MotorDisplay.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\SerialConnector.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\xyGraph.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\App.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app_MarkupCompile.cache
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app_MarkupCompile.lref
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\MainWindow.baml
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\MotorDisplay.baml
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\SerialConnector.baml
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\xyGraph.baml
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.g.resources
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim_Driver_config_app.Properties.Resources.resources
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.csproj.GenerateResource.Cache
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.exe
+C:\Users\te247921\Documents\Visual Studio 2017\Projects\Sim Driver config app\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\Sim Driver config app.pdb

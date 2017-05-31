@@ -145,11 +145,45 @@ namespace Sim_Driver_config_app
             if (myPort.IsOpen)
             {
                 Command myCommand = new Command("getBoardInfo");
+                sendCommand(myCommand);
+            }
+        }
 
+        private void ButtonClick(object sender, RoutedEventArgs e)
+        { 
+            var button = sender as Button;
+            Motor ActiveMotor = ((Motor)button.DataContext);
+            if (button.CommandParameter != null)
+            {
+                switch (button.CommandParameter)
+                {
+                    case "HL":
+                        ActiveMotor.HighLimit = ActiveMotor.TargetInt;
+                        break;
 
+                    case "LL":
+                        ActiveMotor.LowLimit = ActiveMotor.TargetInt;
+                        break;
+
+                    case "Offset":
+                        ActiveMotor.Offset = ActiveMotor.TargetInt;
+                        break;
+
+                    default:
+                        break;
+                }
+                Command newMotorParameters = new Command("MotorLimits", ActiveMotor);
+                sendCommand(newMotorParameters);
+            }
+        }
+
+        private void sendCommand(Command CMD)
+        {
+            if (myPort.IsOpen)
+            {
                 MemoryStream stream1 = new MemoryStream();
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Command));
-                ser.WriteObject(stream1, myCommand);
+                ser.WriteObject(stream1, CMD);
                 stream1.Position = 0;
                 StreamReader sr = new StreamReader(stream1);
                 string mastring = sr.ReadToEnd();
@@ -157,7 +191,6 @@ namespace Sim_Driver_config_app
                 myPort.Write(mastring);
             }
         }
-        
     }
 
     public class SliderConverter : IValueConverter
@@ -167,7 +200,7 @@ namespace Sim_Driver_config_app
             if (parameter != null && parameter.ToString() == "%")
             {
                 double val = System.Convert.ToDouble(value);
-                return (Math.Round((double)val /655.35 , 1)).ToString() + parameter.ToString();
+                return parameter.ToString() + (Math.Round((double)val / 655.35, 1)).ToString();
             }
             else return (Math.Round((double)value, 2)).ToString();
 
@@ -194,6 +227,15 @@ public class Command
     [DataMember]
     internal byte Id;
 
+    [DataMember(Name = "HL")]
+    internal UInt16 HighLimit;
+
+    [DataMember(Name = "LL")]
+    internal UInt16 LowLimit;
+
+    [DataMember(Name = "Offset")]
+    internal UInt16 Offset;
+
     [DataMember]
     UInt16 Span;
 
@@ -201,137 +243,23 @@ public class Command
     {
         this.Cmd = Cmd;
     }
-    
-}
 
-[DataContract]
-public class CaptureData
-{
-    [DataMember]
-    internal UInt32 T;
-
-    [DataMember]
-    internal UInt16 RawPosition;
-
-    [DataMember]
-    internal byte Output;
-
-    [DataMember]
-    internal UInt16 ClampedSetPoint;
-
-}
-
-[DataContract]
-public class MotorInfo
-{
-    [DataMember(Name ="ID",IsRequired =true)]
-    internal byte ID;
-
-    [DataMember(Name ="Position",IsRequired =true)]
-    internal UInt16 RawPosition;
-
-    [DataMember(Name = "kp")]
-    internal double kp;
-
-    [DataMember(Name = "ki")]
-    internal double ki;
-
-    [DataMember(Name = "kd")]
-    internal double kd;
-
-}
-
-[DataContract]
-public class InputBuffer
-{
-    [DataMember(Name = "Cmd", IsRequired = true)]
-    internal string ReceivedCommand;
-
-    [DataMember]
-    internal UInt16 Size;
-
-    [DataMember(Name = "BN")]
-    internal string BoardName;
-
-    [DataMember(Name = "FirmRev")]
-    internal string FirmwareRevision;
-
-    [DataMember(Name = "BoardRev")]
-    internal string BoardRevision;
-
-    [DataMember(Name = "Temp")]
-    internal double Temperature;
-
-    [DataMember(Name = "Buffer")]
-    internal List<CaptureData> Buffer = new List<CaptureData>();
-
-    [DataMember(Name = "MotorInfo")]
-    internal List<MotorInfo> MInfo = new List<MotorInfo>();
-
-}
-
-public class Xsimulator : INotifyPropertyChanged
-{
-    public event PropertyChangedEventHandler PropertyChanged;
-    public List<Motor> Motors = new List<Motor>(2);
-
-    public Xsimulator()
+    public Command(string Cmd, Motor mot)
     {
-        Motors.Add(new Motor(1));
-        Motors.Add(new Motor(2));
-    }
-
-    private string boardName = "Board Name:";
-
-    public string BoardName
-    {
-        get { return boardName; }
-        set
+        this.Cmd = Cmd;
+        switch (Cmd)
         {
-            if (value == boardName) return;
-            boardName = value;
-            NotifyPropertyChanged();
+            case "MotorLimits":
+                this.Id = mot.ID;
+                this.HighLimit = mot.HighLimit;
+                this.LowLimit = mot.LowLimit;
+                this.Offset = mot.Offset;
+                break;
+
+
+            default:
+                break;
         }
     }
-
-    private string firmRevision = "Firmware revision:";
-
-    public string FirmRevision
-    {
-        get { return firmRevision; }
-        set
-        {
-            if (value == firmRevision) return;
-            firmRevision = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    private string boardRevision = "Board revision:";
-
-    public string BoardRevision
-    {
-        get { return boardRevision; }
-        set
-        {
-            if (value == boardRevision) return;
-            boardRevision = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-
-    // This method is called by the Set accessor of each property.
-    // The CallerMemberName attribute that is applied to the optional propertyName
-    // parameter causes the property name of the caller to be substituted as an argument.
-    private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-    {
-        if (PropertyChanged != null)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-
 
 }
