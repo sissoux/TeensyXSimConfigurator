@@ -19,7 +19,7 @@ namespace Sim_Driver_config_app
             Motors.Add(new Motor(2));
         }
 
-        private string boardName = "Board Name:";
+        private string boardName = "";
 
         public string BoardName
         {
@@ -45,7 +45,7 @@ namespace Sim_Driver_config_app
             }
         }
 
-        private string firmRevision = "Firmware revision:";
+        private string firmRevision = "";
 
         public string FirmRevision
         {
@@ -53,12 +53,12 @@ namespace Sim_Driver_config_app
             set
             {
                 if (value == firmRevision) return;
-                firmRevision = value;
+                firmRevision = "Firmware:" + value;
                 NotifyPropertyChanged();
             }
         }
 
-        private string boardRevision = "Board revision:";
+        private string boardRevision = "";
 
         public string BoardRevision
         {
@@ -66,7 +66,7 @@ namespace Sim_Driver_config_app
             set
             {
                 if (value == boardRevision) return;
-                boardRevision = value;
+                boardRevision = "Board:" + value;
                 NotifyPropertyChanged();
             }
         }

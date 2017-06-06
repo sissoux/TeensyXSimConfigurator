@@ -48,6 +48,7 @@ namespace Sim_Driver_config_app
             MotorDisplay1.DataContext = mySim.Motors[0];
             MotorDisplay2.DataContext = mySim.Motors[1];
             LiveCheckbox.DataContext = mySim;
+            StatusDisplay.DataContext = this;
             MainSerial.Port = myPort;
             myPort.DataReceived += new SerialDataReceivedEventHandler(MyDataReceivedHandler);
 
@@ -80,7 +81,12 @@ namespace Sim_Driver_config_app
             }
             if (mySim.LiveMode)
             {
-                if (mySim.Motors.Exists(Motor => Motor.NewPosition)) mySim.Motors.ForEach(Motor => Motor.NewPosition = false);
+                if (mySim.Motors.Exists(Motor => Motor.NewPosition))
+                {
+                    Command myCommand = new Command("setPosition");
+                    sendCommand(myCommand);
+                    mySim.Motors.ForEach(Motor => Motor.NewPosition = false);
+                }
             }
         }
 
@@ -174,9 +180,9 @@ namespace Sim_Driver_config_app
         {
             try
             {
-                mySim.BoardName = "Board name: " + sender.BoardName;
-                mySim.FirmRevision = "Firmware revision: " + sender.FirmwareRevision;
-                mySim.BoardRevision = "Board revision: " + sender.BoardRevision;
+                mySim.BoardName = sender.BoardName;
+                mySim.FirmRevision = sender.FirmwareRevision;
+                mySim.BoardRevision = sender.BoardRevision;
             }
             catch (Exception e)
             {
@@ -237,7 +243,7 @@ namespace Sim_Driver_config_app
                         NewParam = false;
                         break;
                 }
-                if ( NewParam ) command = new Command("MotorLimits", mySim.Motors);
+                if ( NewParam ) command = new Command("setMotorParameters", mySim.Motors);
                 sendCommand(command);
             }
         }

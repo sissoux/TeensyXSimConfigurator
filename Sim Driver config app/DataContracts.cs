@@ -61,10 +61,10 @@ namespace Sim_Driver_config_app
         [DataMember]
         internal UInt32 T;
 
-        [DataMember]
+        [DataMember(Name ="RawPos") ]
         internal UInt16 RawPosition;
 
-        [DataMember]
+        [DataMember(Name ="Out") ]
         internal byte Output;
 
         [DataMember(Name ="CSP") ]
