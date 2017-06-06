@@ -67,7 +67,7 @@ namespace Sim_Driver_config_app
         [DataMember]
         internal byte Output;
 
-        [DataMember]
+        [DataMember(Name ="CSP") ]
         internal UInt16 ClampedSetPoint;
 
     }
@@ -109,8 +109,14 @@ namespace Sim_Driver_config_app
         [DataMember(Name = "Cmd", IsRequired = true)]
         internal string ReceivedCommand;
 
-        [DataMember]
-        internal UInt16 Size;
+        [DataMember(Name = "NOfPoints")]
+        internal UInt16 NumberOfPoints;
+
+        [DataMember(Name = "NOfFrames")]
+        internal UInt16 NumberOfFrame;
+
+        [DataMember(Name = "FrameN")]
+        internal UInt16 FrameNumber;
 
         [DataMember(Name = "BN")]
         internal string BoardName;

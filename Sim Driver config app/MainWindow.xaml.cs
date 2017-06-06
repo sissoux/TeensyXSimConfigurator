@@ -33,10 +33,12 @@ namespace Sim_Driver_config_app
     public partial class MainWindow : Window
     {
         SerialPort myPort = new SerialPort();
-        volatile static string SerialBuffer;
-        volatile static bool NewFullFrameFlag = false;
+        volatile static List<string> SerialBuffer = new List<string>();
+        volatile static int NewFullFrameFlag = 0;
         volatile Xsimulator mySim = new Xsimulator();
-        int Counter = 0;
+        private bool NewConnection = true;
+        //int Counter = 0;
+        List<CaptureData> CapturedDataBuffer = new List<CaptureData>();
 
         public MainWindow()
         {
@@ -57,24 +59,29 @@ namespace Sim_Driver_config_app
 
         private void OnTick()
         {
-            if (NewFullFrameFlag)
+
+            if (myPort.IsOpen && NewConnection)
             {
-                NewFullFrameFlag = false;
-                handleJson();
+                NewConnection = false;
+                Command myCommand = new Command("getBoardInfo");
+                sendCommand(myCommand);
+            }
+            while (NewFullFrameFlag>0)  //Parse every frame in buffer, FIFO
+            {
+                NewFullFrameFlag--;
+                try
+                {
+                    handleJson();
+                }
+                catch (Exception e)
+                {
+                    StatusDisplay.Text = e.Message;
+                }
             }
             if (mySim.LiveMode)
             {
-                if (mySim.Motors[0].NewPosition || mySim.Motors[1].NewPosition )
-                {
-                    mySim.Motors[0].NewPosition = false;
-                    mySim.Motors[1].NewPosition = false;
-                    Command newMotorParameters = new Command("SetPosition", mySim.Motors);
-                    sendCommand(newMotorParameters);
-                }
+                if (mySim.Motors.Exists(Motor => Motor.NewPosition)) mySim.Motors.ForEach(Motor => Motor.NewPosition = false);
             }
-            Counter++;
-            StatusDisplay.Text = Counter.ToString();
-            //if (liveMode)
         }
 
         // The `onTick` method will be called periodically unless cancelled.
@@ -102,54 +109,65 @@ namespace Sim_Driver_config_app
         private static void MyDataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = sender as SerialPort;
-            int count = sp.BytesToRead;
-            char[] InBuffer = new char[count];
-            sp.Read(InBuffer, 0, count);
-            SerialBuffer = SerialBuffer + new String(InBuffer);
-            foreach (char c in InBuffer)
+            while(sp.BytesToRead>0)
             {
-                if (c == '\r')
-                {
-                    NewFullFrameFlag = true;
-                    break;
-                }
+                SerialBuffer.Add(sp.ReadLine());
+                NewFullFrameFlag++;
             }
         }
 
         private void handleJson()
         {
-            char[] separator = { '\r', '\n' };
-            String[] temp = SerialBuffer.Split(separator);
-
-            if (temp.Length > 1)
+            if (SerialBuffer.Count > 0)
             {
-                for (int i = 1; i < temp.Length; i++)
+                string JSONFrame = SerialBuffer[0];
+
+                InputBuffer IncomingObject = new InputBuffer();
+                try
                 {
-                    SerialBuffer += temp[i];
+                    IncomingObject = JsonConvert.DeserializeObject<InputBuffer>(JSONFrame);
+
+                    switch (IncomingObject.ReceivedCommand)
+                    {
+                        case null:
+                            break;
+                        case "BoardInfo":
+                            newBoardInfo(IncomingObject);
+                            break;
+                        case "NewCapture":
+                            CapturedDataBuffer.Clear();
+                            foreach (var dataSet in IncomingObject.Buffer)
+                            {
+                                CapturedDataBuffer.Add(dataSet);
+                            }
+                            break;
+                        case "Capture":
+                            foreach (var dataSet in IncomingObject.Buffer)
+                            {
+                                CapturedDataBuffer.Add(dataSet);
+                            }
+                            if (IncomingObject.FrameNumber == IncomingObject.NumberOfFrame)
+                            {
+                                UpdateGraph(CapturedDataBuffer);
+                            }
+                            break;
+                        default:
+                            throw new Exception("Received Json is not a valid object");
+                    }
+
                 }
-            }
-            else SerialBuffer = null;
+                catch (Exception e)
+                {
+                    //Log failed to parse frame
+                    throw e;
+                }
+                finally
+                {
+                    SerialBuffer.RemoveAt(0);
+                }
 
-            InputBuffer IncomingObject = new InputBuffer();
-            try
-            {
-                IncomingObject = JsonConvert.DeserializeObject<InputBuffer>(temp[0]);
-
             }
-            catch (Exception e)
-            {
-                //StatusDisplay.Text = e.Message;
-            }
-
-
-            switch (IncomingObject.ReceivedCommand)
-            {
-                case null:
-                    break;
-                case "BoardInfo":
-                    newBoardInfo(IncomingObject);
-                    break;
-            }
+            else throw new Exception("Nothing To Parse");
         }
 
         private void newBoardInfo(InputBuffer sender)
@@ -166,48 +184,38 @@ namespace Sim_Driver_config_app
             }
         }
 
-        private void UpdateGraph()
+        private void UpdateGraph(List<CaptureData> DataToDisplay)
         {
-            string json = "{\"Cmd\":\"Capture\",\"Size\":10,\"Buffer\":[{\"T\":0,\"RawPosition\":32767,\"Output\":128,\"ClampedSetPoint\":32767},{\"T\":10000,\"RawPosition\":32867,\"Output\":141,\"ClampedSetPoint\":36661},{\"T\":20000,\"RawPosition\":32867,\"Output\":134,\"ClampedSetPoint\":39941},{\"T\":30000,\"RawPosition\":32867,\"Output\":139,\"ClampedSetPoint\":42087},{\"T\":40000,\"RawPosition\":32867,\"Output\":135,\"ClampedSetPoint\":42763},{\"T\":50000,\"RawPosition\":32767,\"Output\":137,\"ClampedSetPoint\":41860},{\"T\":60000,\"RawPosition\":32867,\"Output\":135,\"ClampedSetPoint\":39522},{\"T\":70000,\"RawPosition\":32767,\"Output\":135,\"ClampedSetPoint\":36117},{\"T\":80000,\"RawPosition\":32867,\"Output\":134,\"ClampedSetPoint\":32183},{\"T\":90000,\"RawPosition\":32767,\"Output\":134,\"ClampedSetPoint\":28342},{\"T\":100000,\"RawPosition\":32867,\"Output\":132,\"ClampedSetPoint\":25199},{\"T\":110000,\"RawPosition\":32767,\"Output\":133,\"ClampedSetPoint\":23251},{\"T\":120000,\"RawPosition\":32867,\"Output\":130,\"ClampedSetPoint\":22805},{\"T\":130000,\"RawPosition\":32767,\"Output\":130,\"ClampedSetPoint\":23932},{\"T\":140000,\"RawPosition\":32867,\"Output\":129,\"ClampedSetPoint\":26454},{\"T\":150000,\"RawPosition\":32767,\"Output\":128,\"ClampedSetPoint\":29973},{\"T\":160000,\"RawPosition\":32867,\"Output\":127,\"ClampedSetPoint\":33932},{\"T\":170000,\"RawPosition\":32767,\"Output\":126,\"ClampedSetPoint\":37708},{\"T\":180000,\"RawPosition\":32867,\"Output\":125,\"ClampedSetPoint\":40704},{\"T\":190000,\"RawPosition\":32767,\"Output\":124,\"ClampedSetPoint\":42446},{\"T\":200000,\"RawPosition\":32867,\"Output\":123,\"ClampedSetPoint\":42661},{\"T\":210000,\"RawPosition\":32767,\"Output\":122,\"ClampedSetPoint\":41313},{\"T\":220000,\"RawPosition\":32867,\"Output\":121,\"ClampedSetPoint\":38616},{\"T\":230000,\"RawPosition\":32767,\"Output\":120,\"ClampedSetPoint\":34996},{\"T\":240000,\"RawPosition\":32867,\"Output\":120,\"ClampedSetPoint\":31024},{\"T\":250000,\"RawPosition\":32767,\"Output\":119,\"ClampedSetPoint\":27327},{\"T\":260000,\"RawPosition\":32867,\"Output\":118,\"ClampedSetPoint\":24489},{\"T\":270000,\"RawPosition\":32767,\"Output\":118,\"ClampedSetPoint\":22958},{\"T\":280000,\"RawPosition\":32767,\"Output\":118,\"ClampedSetPoint\":22975},{\"T\":290000,\"RawPosition\":32767,\"Output\":117,\"ClampedSetPoint\":24539},{\"T\":300000,\"RawPosition\":32767,\"Output\":117,\"ClampedSetPoint\":27401},{\"T\":310000,\"RawPosition\":42967,\"Output\":116,\"ClampedSetPoint\":31111},{\"T\":320000,\"RawPosition\":38367,\"Output\":118,\"ClampedSetPoint\":35082},{\"T\":330000,\"RawPosition\":41267,\"Output\":116,\"ClampedSetPoint\":38688},{\"T\":340000,\"RawPosition\":39567,\"Output\":117,\"ClampedSetPoint\":41359},{\"T\":350000,\"RawPosition\":40567,\"Output\":118,\"ClampedSetPoint\":42673},{\"T\":360000,\"RawPosition\":39967,\"Output\":117,\"ClampedSetPoint\":42424},{\"T\":370000,\"RawPosition\":40267,\"Output\":119,\"ClampedSetPoint\":40650},{\"T\":380000,\"RawPosition\":40067,\"Output\":118,\"ClampedSetPoint\":37631},{\"T\":390000,\"RawPosition\":40167,\"Output\":120,\"ClampedSetPoint\":33845},{\"T\":400000,\"RawPosition\":40167,\"Output\":120,\"ClampedSetPoint\":29888},{\"T\":410000,\"RawPosition\":40167,\"Output\":121,\"ClampedSetPoint\":26386},{\"T\":420000,\"RawPosition\":40167,\"Output\":122,\"ClampedSetPoint\":23891},{\"T\":430000,\"RawPosition\":40167,\"Output\":122,\"ClampedSetPoint\":22798},{\"T\":440000,\"RawPosition\":40067,\"Output\":124,\"ClampedSetPoint\":23279},{\"T\":450000,\"RawPosition\":40167,\"Output\":125,\"ClampedSetPoint\":25257},{\"T\":460000,\"RawPosition\":40067,\"Output\":125,\"ClampedSetPoint\":28421},{\"T\":470000,\"RawPosition\":40167,\"Output\":127,\"ClampedSetPoint\":32272},{\"T\":480000,\"RawPosition\":40067,\"Output\":127,\"ClampedSetPoint\":36200},{\"T\":490000,\"RawPosition\":40167,\"Output\":129,\"ClampedSetPoint\":39587}]}";
-
-            InputBuffer test = new InputBuffer();
-            test = JsonConvert.DeserializeObject<InputBuffer>(json);
-            
-               List<PointCollection> series = new List<PointCollection>(3);
-            series.Add(new PointCollection(test.Size));
-            series.Add(new PointCollection(test.Size));
-            series.Add(new PointCollection(test.Size));
-            foreach (var value in test.Buffer)
+            List<PointCollection> series = new List<PointCollection>(3);
+            series.Add(new PointCollection(DataToDisplay.Count));
+            series.Add(new PointCollection(DataToDisplay.Count));
+            series.Add(new PointCollection(DataToDisplay.Count));
+            foreach (var value in DataToDisplay)
             {
-                series[0].Add(new Point(0, value.Output));
-                series[1].Add(new Point(0, value.RawPosition));
+                //series[0].Add(new Point(0, value.Output));
+                //series[1].Add(new Point(0, value.RawPosition));
                 series[2].Add(new Point(0, value.ClampedSetPoint));
             }
-            MyXYGraph.addToGraph(series[0]);
-            MyXYGraph.addToGraph(series[1]);
+            MyXYGraph.cleanGraph();
+            //MyXYGraph.addToGraph(series[0]);
+            //MyXYGraph.addToGraph(series[1]);
             MyXYGraph.addToGraph(series[2]);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateGraph();
-        }
-
-        private void Send_button_Click(object sender, RoutedEventArgs e)
-        {
-            if (myPort.IsOpen)
-            {
-                Command myCommand = new Command("getBoardInfo");
-                sendCommand(myCommand);
-            }
+            //UpdateGraph();
         }
 
         private void ButtonClick(object sender, RoutedEventArgs e)
-        { 
+        {
+           
             var button = sender as Button;
             Motor ActiveMotor = ((Motor)button.DataContext);
             if (button.CommandParameter != null)
             {
+                bool NewParam = true;
+                Command command = null;
                 switch (button.CommandParameter)
                 {
                     case "HL":
@@ -221,12 +229,16 @@ namespace Sim_Driver_config_app
                     case "Offset":
                         ActiveMotor.Offset = ActiveMotor.TargetInt;
                         break;
-
+                    case "StepCapture":
+                        NewParam = false;
+                        command = new Command("getClampedSetPoint");
+                        break;
                     default:
+                        NewParam = false;
                         break;
                 }
-                Command newMotorParameters = new Command("MotorLimits", mySim.Motors);
-                sendCommand(newMotorParameters);
+                if ( NewParam ) command = new Command("MotorLimits", mySim.Motors);
+                sendCommand(command);
             }
         }
 

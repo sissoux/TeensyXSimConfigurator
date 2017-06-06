@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Sim_Driver_config_app"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="750" Width="1200" Loaded="Window_Loaded" ResizeMode="CanMinimize" >
+        Title="MainWindow" Height="750" Width="700" Loaded="Window_Loaded" ResizeMode="CanMinimize" >
     <Window.Resources>
         <local:SliderConverter x:Key="SliderConv"/>
         <System:Double x:Key="SliderHeight">100</System:Double>
@@ -18,7 +18,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="660"/>
-            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -27,21 +27,21 @@
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <StackPanel x:Name="DataDisplay" Orientation="Vertical" Grid.Row="1">
-            <Label Content="{Binding Path=BoardName}"/>
-                <Label Content="{Binding Path=BoardRevision}"/>
-                <Label Content="{Binding Path=FirmRevision}"/>
         </StackPanel>
-        
         <local:xyGraph x:Name="MyXYGraph" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Grid.Column="1">
             <local:SerialConnector x:Name="MainSerial" />
             <CheckBox VerticalAlignment="Center" Content="Live update" x:Name="LiveCheckbox" IsChecked="{Binding Path=LiveMode}" Margin="10,0,0,0" />
-
         </StackPanel>
-        <Button x:Name="Send_button" Content="Send Test Data" Grid.Column="1" HorizontalAlignment="Left" Margin="10,2,0,1" VerticalAlignment="Center" Width="100" Click="Send_button_Click" />
-        <TextBlock Grid.Row="3" x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
-        <Canvas x:Name="mycanvas"/>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" x:Name="motorInfoPanel">
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" >
+            <Label Content="{Binding Path=BoardName}" Width="150"/>
+            <Label Content="{Binding Path=BoardRevision}" Width="150"/>
+            <Label Content="{Binding Path=FirmRevision}" Width="150"/>
+            <TextBlock Grid.Row="3" x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
+        </StackPanel>
+
+        <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="1" Margin="0,0,0,5">
+            <StackPanel Orientation="Horizontal"  x:Name="motorInfoPanel">
             <StackPanel x:Name="MotorDisplay1" Orientation="Vertical" Width="300">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Content="Motor ID:"/>
@@ -71,14 +71,16 @@
                         <Label Content="SetPpoint" Width="65" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                        <Button Content="High Limit" Padding="2,0,2,0" Click="ButtonClick" x:Name="High_Limit" CommandParameter="HL" />
-                        <Button Content="Offset" Padding="2,0,2,0"     Click="ButtonClick" x:Name="Offset" CommandParameter="Offset" />
-                        <Button Content="Low Limit" Padding="2,0,2,0"  Click="ButtonClick" x:Name="Low_Limit" CommandParameter="LL" />
+                        <Button Content="High Limit" Padding="2,0,2,0" Click="ButtonClick" CommandParameter="HL" />
+                        <Button Content="Offset" Padding="2,0,2,0"     Click="ButtonClick" CommandParameter="Offset" />
+                        <Button Content="Low Limit" Padding="2,0,2,0"  Click="ButtonClick" CommandParameter="LL" />
                         <Label Content="Set current position as:" FlowDirection="LeftToRight" HorizontalContentAlignment="Center"/>
                     </StackPanel>
-                </StackPanel>
 
+                        <Button Content="Step response capture" Padding="2,0,2,0" Click="ButtonClick" x:Name="High_Limit" CommandParameter="StepCapture" Margin="50,10,50,0" />
+                </StackPanel>
             </StackPanel>
+            <Border BorderBrush="Gray" BorderThickness="1" Margin="15,0,0,0"/>
             <StackPanel x:Name="MotorDisplay2" Orientation="Vertical" Width="300">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Content="Motor ID:"/>
@@ -116,7 +118,8 @@
                 </StackPanel>
 
             </StackPanel>
-        </StackPanel>
+            </StackPanel>
+        </Border>
 
     </Grid>
 </Window>
