@@ -91,10 +91,7 @@ namespace Sim_Driver_config_app
         }
 
         // The `onTick` method will be called periodically unless cancelled.
-        private static async Task RunPeriodicAsync(Action onTick,
-                                                   TimeSpan dueTime,
-                                                   TimeSpan interval,
-                                                   CancellationToken token)
+        private static async Task RunPeriodicAsync(Action onTick, TimeSpan dueTime, TimeSpan interval, CancellationToken token)
         {
             // Initial wait time before we begin the periodic loop.
             if (dueTime > TimeSpan.Zero)
