@@ -38,7 +38,12 @@
                 <Label VerticalAlignment="Center" Content="{Binding Path=FirmRevision}" Margin="2,0,0,0"/>
             </StackPanel>
         </StackPanel>
-        <TextBlock Grid.Column="1" Grid.Row="3"  x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
+            <Button Content="Save to File" Padding="2,0,2,0"  Click="ButtonClick" CommandParameter="SaveToFile" />
+            <Button Content="Save to EEPROM" Padding="2,0,2,0"  Click="ButtonClick" CommandParameter="SaveToEeprom" />
+            <TextBlock Grid.Column="1" Grid.Row="3"  x:Name="StatusDisplay" Text="{Binding SerialBuffer}" Margin="10,2,2,2" VerticalAlignment="Center" Height="20"/>
+
+        </StackPanel>
 
             <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="1" Margin="0,0,0,5">
             <StackPanel Orientation="Horizontal"  x:Name="motorInfoPanel">

@@ -23,6 +23,7 @@ using System.Runtime.CompilerServices;
 using Sim_Driver_config_app;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Xml;
 
 namespace Sim_Driver_config_app
 {
@@ -214,35 +215,67 @@ namespace Sim_Driver_config_app
         {
            
             var button = sender as Button;
-            Motor ActiveMotor = ((Motor)button.DataContext);
+            Motor ActiveMotor;
             if (button.CommandParameter != null)
             {
-                bool NewParam = true;
-                Command command = null;
                 switch (button.CommandParameter)
                 {
                     case "HL":
+                        ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.HighLimit = ActiveMotor.TargetInt;
+                        sendCommand(new Command("setMotorParameters", mySim.Motors));
                         break;
 
                     case "LL":
+                        ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.LowLimit = ActiveMotor.TargetInt;
+                        sendCommand(new Command("setMotorParameters", mySim.Motors));
+                        break;
+
+                    case "SaveToFile":
+                        saveToFile();
+                        break;
+
+                    case "SaveToEeprom":
+                        sendCommand(new Command("Save"));
                         break;
 
                     case "Offset":
+                        ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.Offset = ActiveMotor.TargetInt;
+                        sendCommand(new Command("setMotorParameters", mySim.Motors));
                         break;
+
                     case "StepCapture":
-                        NewParam = false;
-                        command = new Command("getClampedSetPoint");
+                        sendCommand(new Command("getClampedSetPoint"));
                         break;
+
                     default:
-                        NewParam = false;
                         break;
                 }
-                if ( NewParam ) command = new Command("setMotorParameters", mySim.Motors);
-                sendCommand(command);
             }
+        }
+
+        private void saveToFile()
+        {
+            try
+            {
+                Stream fs = new FileStream(@"C:\tmp\file.xml", FileMode.Create, FileAccess.Write);
+                List<MotorInfo> mInfos = new List<MotorInfo>();
+                foreach (var mot in mySim.Motors) mInfos.Add(new MotorInfo(mot));
+                DataContractSerializer dcs = new DataContractSerializer(typeof(List<MotorInfo>));
+                XmlDictionaryWriter writer = XmlDictionaryWriter.CreateTextWriter(fs, Encoding.UTF8);
+                writer.WriteStartDocument();
+                    dcs.WriteObject(writer, mInfos);
+                writer.Close();
+                fs.Close();
+
+            }
+            catch (Exception e)
+            {
+                StatusDisplay.Text = e.Message;
+            }
+
         }
 
         private void sendCommand(Command CMD)

@@ -101,6 +101,20 @@ namespace Sim_Driver_config_app
 
         [DataMember(Name = "Offset")]
         internal UInt16 Offset;
+
+        public MotorInfo(Motor m)
+        {
+            this.ID = m.ID;
+            this.kp = m.kp;
+            this.ki = m.ki;
+            this.kd = m.kd;
+            this.HighLimit = m.HighLimit;
+            this.LowLimit = m.LowLimit;
+            this.Offset = m.Offset;
+        }
+        public MotorInfo()
+        {
+        }
     }
 
     [DataContract]

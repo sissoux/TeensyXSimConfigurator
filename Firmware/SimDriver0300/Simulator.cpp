@@ -1,16 +1,12 @@
 #include "Simulator.h"
-#include "ArduinoJson\ArduinoJson.h"
+#include <ArduinoJson.h>
 
 
 
-Simulator::Simulator() : M1(0, 10, 10, 10, A0, &Serial), M2(0, 10, 10, 10, A0, &Serial)
+Simulator::Simulator(Stream *MainStream, Stream *MotorStream, int AnalogIn1, int AnalogIn2, uint16_t PID_Rate) : M1(0, 10, 10, 10, AnalogIn1, MotorStream), M2(1, 10, 10, 10, AnalogIn2, MotorStream)
   {
-    
-  }
-
-  void Simulator::SendData()
-  {
-    M1.Hello();
+	  this->serial = MainStream;
+	  PIDRefreshRate = PID_Rate;
   }
   
 
@@ -38,13 +34,42 @@ Simulator::Simulator() : M1(0, 10, 10, 10, A0, &Serial), M2(0, 10, 10, 10, A0, &
 		  }
 		  JsonObject& root = jsonBuffer.parseObject(input);
 		  const char* Command = root["Cmd"];
-		  if (strcmp(Command, "getClampedSetPoint") == 0) //{Cmd:getClampedSetPoint}
+		  if (strcmp(Command, "getCapture") == 0) //{Cmd:getClampedSetPoint}
 		  {
 			  //sendClampedSetPoint(4, 500);
 		  }
 		  else if (strcmp(Command, "getBoardInfo") == 0) //{Cmd:getBoardInfo}
 		  {
+			  sendBoardInfo();
+		  }
+		  else if (strcmp(Command, "save") == 0) //{Cmd:save}
+		  {
 			  //sendBoardInfo();
 		  }
+	  }
+  }
+
+  void Simulator::sendBoardInfo()
+  {
+		  DynamicJsonBuffer jsonBuffer;
+		  JsonObject& root = jsonBuffer.createObject();
+
+		  root["Cmd"] = "BoardInfo";
+		  root["BN"] = BOARD_NAME;
+		  root["FirmRev"] = FIRMWARE_REVISION;
+		  root["BoardRev"] = BOARD_REVISION;
+
+		  root.printTo(Serial);
+		  Serial.println();
+}
+
+  void Simulator::refreshState()
+  {
+	  parseSerialData();
+
+	  if (InputRefreshTimer >= ADC_IN_REFRESH_RATE)
+	  {
+		  InputRefreshTimer -= ADC_IN_REFRESH_RATE;
+		  
 	  }
   }

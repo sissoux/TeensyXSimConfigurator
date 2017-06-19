@@ -42,13 +42,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\te247921\Desktop\arduino-1.8.2\libraries\ArduinoJson;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\libraries;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries;$(ProjectDir)..\..\..\..\..\..\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\avr;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\util;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\utils;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\avr;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\tools\arm\arm-none-eabi\include;$(ProjectDir)..\SimDriver0300;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\libraries\ArduinoJson\src;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\libraries;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries;$(ProjectDir)..\..\..\..\..\..\Arduino\libraries;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\avr;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\util;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\utils;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3\avr;$(ProjectDir)..\..\..\..\..\..\..\Desktop\arduino-1.8.2\hardware\tools\arm\arm-none-eabi\include;$(ProjectDir)..\SimDriver0300;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ProjectDir)__vm\.SimDriver0300.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__HARDWARE_MK20dx256__;__HARDWARE_MK20DX256__;_VMDEBUG=1;__MK20DX256__;TEENSYDUINO=136;ARDUINO=10802;F_CPU=96000000;USB_SERIAL;LAYOUT_US_ENGLISH;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
