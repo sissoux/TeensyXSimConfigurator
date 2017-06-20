@@ -40,4 +40,6 @@ C:\Temp\VMBuilds\SimDriver0300\teensy31\Debug\SimDriver0300.cpp.o: \
  C:\Temp\VMBuilds\SimDriver0300\teensy31\Debug\Simulator.h \
  C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3/Arduino.h \
  C:\Temp\VMBuilds\SimDriver0300\teensy31\Debug\Motor.h \
+ C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries\ADC/ADC.h \
+ C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries\ADC/ADC_Module.h \
  C:\Program\ Files\ (x86)\Microsoft\ Visual\ Studio\ 14.0\Common7\IDE\Extensions\pjwcjetl.32o\Micro\ Platforms\default\debuggers\VM_DBG/VM_DBG.h

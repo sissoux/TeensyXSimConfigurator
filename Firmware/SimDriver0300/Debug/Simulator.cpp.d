@@ -39,6 +39,8 @@ C:\Temp\VMBuilds\SimDriver0300\teensy31\Debug\Simulator.cpp.o: \
  C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3/Arduino.h \
  C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\cores\teensy3/IntervalTimer.h \
  C:\Temp\VMBuilds\SimDriver0300\teensy31\Debug\Motor.h \
+ C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries\ADC/ADC.h \
+ C:\Users\te247921\Desktop\arduino-1.8.2\hardware\teensy\avr\libraries\ADC/ADC_Module.h \
  C:\Users\te247921\Desktop\arduino-1.8.2\libraries\ArduinoJson\src/ArduinoJson.h \
  C:\Users\te247921\Desktop\arduino-1.8.2\libraries\ArduinoJson\src/ArduinoJson.hpp \
  C:\Users\te247921\Desktop\arduino-1.8.2\libraries\ArduinoJson\src/ArduinoJson/DynamicJsonBuffer.hpp \

@@ -5,22 +5,34 @@
 #ifndef Motor_h
 #define Motor_h
 
-#define AUTOMATIC  1
-#define MANUAL  0
 #define DIRECT  0
 #define REVERSE  1
+
+#define SCALED_MODE 0
+#define CLAMPED_MODE 1
+#define HALF_16BIT 32767
+#define OUT_MIN -127.0
+#define OUT_MAX 127.0
 
 
 class Motor
 {
   public:
 
-    Motor(byte id, double kp, double ki, double kd, uint8_t AnalogInput, Stream *serialPtr);
+    Motor(byte id, double kp, double ki, double kd, Stream *serialPtr);
     
     void begin();
-	void computePID(uint16_t Error);
+	void computePID(double Error);
 	void writeSpeed(int8_t speed);
-	void getInput();
+	void setFeedback(uint16_t value);
+	void updateState();
+	void setPID(double kp, double ki, double kd);
+	void initialize();
+	void startPID();
+	void stopPID();
+	void setSampleTime(double SampleTime);
+	uint16_t setTarget(uint16_t setPoint, uint8_t mode); 
+	void setLimits(uint16_t High, uint16_t Low, uint16_t offset);
     
   private:
     Stream *serial;
@@ -29,6 +41,9 @@ class Motor
     uint16_t _AnalogInput;
     uint16_t _LLimit;
     uint16_t _HLimit;
+	int16_t Offset = 0;
+	bool PIDOn = false;
+	double SampleTimeInS;
 
     double dispKp;       // * we'll hold on to the tuning parameters in user-entered
     double dispKi;        //   format for display purposes
@@ -43,7 +58,7 @@ class Motor
 
     elapsedMillis PIDTimer;
     uint16_t PIDCalculationRate;
-    double ITerm, LastInput;
+    double ITerm, LastFeedback;
 
     bool inAuto;
     

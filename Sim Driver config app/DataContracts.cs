@@ -20,7 +20,7 @@ namespace Sim_Driver_config_app
         [DataMember]
         UInt16 Span;
 
-        [DataMember]
+        [DataMember(Name = "MotorInfo")]
         internal List<MotorInfo> MotorInfoList = new List<MotorInfo>();
 
         public Command(string Cmd)
@@ -33,12 +33,9 @@ namespace Sim_Driver_config_app
             this.Cmd = Cmd;
             if (MotorList.Count == 2)
             {
-                MotorInfo m1 = new MotorInfo();
-                MotorInfo m2 = new MotorInfo();
-                
-                this.MotorInfoList.Add(m1);
-                this.MotorInfoList.Add(m2);
+                foreach (var m in MotorList) this.MotorInfoList.Add(new MotorInfo(m));
 
+                /*
                 for (int i = 0; i<2; i++)
                 {
                     MotorInfoList[i].ID = MotorList[i].ID;
@@ -49,7 +46,7 @@ namespace Sim_Driver_config_app
                     MotorInfoList[i].HighLimit = MotorList[i].HighLimit;
                     MotorInfoList[i].LowLimit = MotorList[i].LowLimit;
                     MotorInfoList[i].Offset = MotorList[i].Offset;
-                }
+                }*/
             }
             
         }

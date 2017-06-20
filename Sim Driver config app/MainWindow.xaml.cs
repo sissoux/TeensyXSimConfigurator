@@ -138,6 +138,9 @@ namespace Sim_Driver_config_app
                         case "BoardInfo":
                             newBoardInfo(IncomingObject);
                             break;
+                        case "MotorInfo":
+                            newMotorInfo(IncomingObject);
+                            break;
                         case "NewCapture":
                             CapturedDataBuffer.Clear();
                             foreach (var dataSet in IncomingObject.Buffer)
@@ -181,6 +184,27 @@ namespace Sim_Driver_config_app
                 mySim.BoardName = sender.BoardName;
                 mySim.FirmRevision = sender.FirmwareRevision;
                 mySim.BoardRevision = sender.BoardRevision;
+            }
+            catch (Exception e)
+            {
+                //StatusDisplay.Text = e.Message;
+            }
+        }
+
+        private void newMotorInfo(InputBuffer sender)
+        {
+            try
+            {
+                foreach (var m in sender.MInfo)
+                {
+                    mySim.Motors[m.ID - 1].kp = m.kp;
+                    mySim.Motors[m.ID - 1].ki = m.ki;
+                    mySim.Motors[m.ID - 1].kd = m.kd;
+                    mySim.Motors[m.ID - 1].RawPosition = m.RawPosition;
+                    mySim.Motors[m.ID - 1].HighLimit = m.HighLimit;
+                    mySim.Motors[m.ID - 1].LowLimit = m.LowLimit;
+                    mySim.Motors[m.ID - 1].Offset = m.Offset;
+                }
             }
             catch (Exception e)
             {
