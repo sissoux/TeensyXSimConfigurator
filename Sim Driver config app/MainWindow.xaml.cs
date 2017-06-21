@@ -67,6 +67,8 @@ namespace Sim_Driver_config_app
                 NewConnection = false;
                 Command myCommand = new Command("getBoardInfo");
                 sendCommand(myCommand);
+                myCommand = new Command("getMotorParameters");
+                sendCommand(myCommand);
             }
             while (NewFullFrameFlag>0)  //Parse every frame in buffer, FIFO
             {
@@ -271,7 +273,7 @@ namespace Sim_Driver_config_app
                         break;
 
                     case "StepCapture":
-                        sendCommand(new Command("getClampedSetPoint"));
+                        sendCommand(new Command("getMotorParameters"));
                         break;
 
                     default:

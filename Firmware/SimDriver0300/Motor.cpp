@@ -5,7 +5,7 @@
 Motor::Motor(byte id, double kp, double ki, double kd, Stream *serialPtr)
 {
   serial = serialPtr;
-  setPID(kp, ki, kd);
+  dispKp = kp; dispKi = ki; dispKd = kd;
 }
 
 void Motor::updateState()
@@ -15,23 +15,12 @@ void Motor::updateState()
 		double target = (double)ClampedSetPoint;
 		double error = target - FeedBack;
 
-		/*Serial.print("Motor ");
-		Serial.print(this->_Id);
-		Serial.print(" target: ");
-		Serial.print(target);
-		Serial.print(", error: ");
-		Serial.print(error);*/
-
 		ITerm += (Ki*error);
 		if (ITerm > RAW_OUT_MAX) ITerm = RAW_OUT_MAX;
 		else if (ITerm < RAW_OUT_MIN) ITerm = RAW_OUT_MIN;
+
 		double dInput = (FeedBack - LastFeedback);
-		double output = Kp * error;// +ITerm - Kd * dInput;
-		/*
-		Serial.print(", kd: ");
-		Serial.print(Kd);
-		Serial.print(", ITerm: ");
-		Serial.print(ITerm);*/
+		double output = Kp * error + ITerm - Kd * dInput;
 
 		output = output / 256.0;
 
@@ -64,8 +53,7 @@ void Motor::writeSpeed(int8_t Speed)
 
 void Motor::setSampleTime(double SampleTime)
 {
-	SampleTimeInS = SampleTime/1000;
-
+	SampleTimeInS = SampleTime/1000.0;
 	Ki = dispKi * SampleTimeInS;
 	if (SampleTimeInS != 0)	Kd = dispKd / SampleTimeInS;
 }
@@ -100,14 +88,13 @@ void Motor::setLimits(uint16_t High, uint16_t Low, uint16_t Neutral)
 
 void Motor::setPID(double kp, double ki, double kd)
 {
-
 	if (kp < 0 || ki < 0 || kd < 0) return;
 
 	dispKp = kp; dispKi = ki; dispKd = kd;
 
 	Kp = kp;
-	Ki = dispKi * SampleTimeInS;
-	if (SampleTimeInS != 0)	Kd = dispKd / SampleTimeInS;
+	Ki = ki * SampleTimeInS;
+	if (SampleTimeInS != 0)	Kd = kd / SampleTimeInS;
 }
 
 
@@ -117,7 +104,9 @@ void Motor::setPID(double kp, double ki, double kd)
 ******************************************************************************/
 void Motor::initialize()
 {
-
+	ITerm = 0;
+	LastFeedback = FeedBack;
+	setPID(dispKp, dispKi, dispKd);
 }
 
 void Motor::startPID()

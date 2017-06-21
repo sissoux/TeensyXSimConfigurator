@@ -4,19 +4,19 @@
 
 
 
-Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), M1(0, 1, 0, 0, MotorSerial), M2(1, 1, 0, 0, MotorSerial)
+Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), M1(0, 0.05, 1, 0.001, MotorSerial), M2(1, 0.05, 1, 0.001, MotorSerial)
   {
-	  M1.setSampleTime(PIDRefreshRate);
 	  this->serial = MainSerial;
 	  setPIDRefreshRate(PID_Rate);
   }
   
 void Simulator::begin()
 {
-	Serial.println("Initialize ADC");
 	initADC();
-	Serial.println(M1.setTarget(32768, CLAMPED_MODE));
-	Serial.println(M2.setTarget(32768, CLAMPED_MODE));
+	M1.setTarget(32768, CLAMPED_MODE);
+	M2.setTarget(32768, CLAMPED_MODE);
+	M1.setSampleTime(PIDRefreshRate);
+	M2.setSampleTime(PIDRefreshRate);
 	M1.startPID();
 	M2.startPID();
 }
@@ -62,14 +62,14 @@ void Simulator::begin()
 		  {
 
 		  }
-		  else if (strcmp(Command, "setMotorParameters"))
+		  else if (strcmp(Command, "setMotorParameters") == 0)
 		  {
 			  M1.setLimits(root["MotorInfo"][0]["HL"], root["MotorInfo"][0]["LL"], root["MotorInfo"][0]["Offset"]);
 			  M2.setLimits(root["MotorInfo"][1]["HL"], root["MotorInfo"][1]["LL"], root["MotorInfo"][1]["Offset"]);
 		  }
-		  else if (strcmp(Command, "getMotorParameters"))
+		  else if (strcmp(Command, "getMotorParameters") == 0)
 		  {
-			  
+			  sendMotorInfo();
 		  }
 	  }
   }
@@ -125,17 +125,9 @@ void Simulator::begin()
 
 	  if (PIDRefreshTimer >= PIDRefreshRate)
 	  {
-		  PIDRefreshTimer -= PIDRefreshRate;
+		  PIDRefreshTimer -= PIDRefreshRate; 
 		  M1.updateState();
-		  //M2.updateState();
-		  Serial.print("M1 fb: ");
-		  Serial.print(M1.FeedBack);
-		  Serial.print(", M1 output: ");
-		  Serial.print(M1.Output);
-		  Serial.print(", M2 fb: ");
-		  Serial.print(M2.FeedBack); 
-		  Serial.print(", M2 output: ");
-		  Serial.println(M2.Output);
+		  M2.updateState();
 	  }
   }
 

@@ -1,13 +1,13 @@
 #include "Simulator.h"
 
-Simulator simulator(&Serial, &Serial1, A0, A1, 300);
+Simulator simulator(&Serial, &Serial1, A0, A1, 500);
 
 
 void setup() {
   //Serial.begin(115200);
   while (!Serial);
-  Serial.println("X-Simulator teensy PID controller.");
-  Serial.println("V3.00  21/06/2017  by VisionOfLight");
+  /*Serial.println("X-Simulator teensy PID controller.");
+  Serial.println("V3.00  21/06/2017  by VisionOfLight");*/
 
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
