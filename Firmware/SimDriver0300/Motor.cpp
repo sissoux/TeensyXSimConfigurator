@@ -1,8 +1,6 @@
 #include "Motor.h"
 #include <ADC.h>
 //#include <math.h>
-#define MAX_UINT16 65535
-
 
 Motor::Motor(byte id, double kp, double ki, double kd, Stream *serialPtr)
 {
@@ -16,15 +14,31 @@ void Motor::updateState()
 	{
 		double target = (double)ClampedSetPoint;
 		double error = target - FeedBack;
+
+		/*Serial.print("Motor ");
+		Serial.print(this->_Id);
+		Serial.print(" target: ");
+		Serial.print(target);
+		Serial.print(", error: ");
+		Serial.print(error);*/
+
 		ITerm += (Ki*error);
-		if (ITerm > OUT_MAX) ITerm = OUT_MAX;
-		else if (ITerm < OUT_MIN) ITerm = OUT_MIN;
+		if (ITerm > RAW_OUT_MAX) ITerm = RAW_OUT_MAX;
+		else if (ITerm < RAW_OUT_MIN) ITerm = RAW_OUT_MIN;
 		double dInput = (FeedBack - LastFeedback);
-		double output = Kp * error + ITerm - Kd * dInput;
+		double output = Kp * error;// +ITerm - Kd * dInput;
+		/*
+		Serial.print(", kd: ");
+		Serial.print(Kd);
+		Serial.print(", ITerm: ");
+		Serial.print(ITerm);*/
+
+		output = output / 256.0;
 
 		if (output > OUT_MAX) output = OUT_MAX;
 		else if (output < OUT_MIN) output = OUT_MIN;
 
+		Output = (int8_t)output;
 		LastFeedback = FeedBack;
 	}
 }
@@ -50,10 +64,10 @@ void Motor::writeSpeed(int8_t Speed)
 
 void Motor::setSampleTime(double SampleTime)
 {
-	SampleTimeInS = SampleTime;
+	SampleTimeInS = SampleTime/1000;
 
 	Ki = dispKi * SampleTimeInS;
-	Kd = dispKd / SampleTimeInS;
+	if (SampleTimeInS != 0)	Kd = dispKd / SampleTimeInS;
 }
 
 void Motor::setFeedback(uint16_t value)
@@ -93,8 +107,7 @@ void Motor::setPID(double kp, double ki, double kd)
 
 	Kp = kp;
 	Ki = dispKi * SampleTimeInS;
-	Kd = dispKd / SampleTimeInS;
-
+	if (SampleTimeInS != 0)	Kd = dispKd / SampleTimeInS;
 }
 
 

@@ -4,14 +4,22 @@
 
 
 
-Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), M1(0, 10, 10, 10, MotorSerial), M2(1, 10, 10, 10, MotorSerial)
+Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), M1(0, 1, 0, 0, MotorSerial), M2(1, 1, 0, 0, MotorSerial)
   {
+	  M1.setSampleTime(PIDRefreshRate);
 	  this->serial = MainSerial;
 	  setPIDRefreshRate(PID_Rate);
-	  initADC();
   }
   
-
+void Simulator::begin()
+{
+	Serial.println("Initialize ADC");
+	initADC();
+	Serial.println(M1.setTarget(32768, CLAMPED_MODE));
+	Serial.println(M2.setTarget(32768, CLAMPED_MODE));
+	M1.startPID();
+	M2.startPID();
+}
   void Simulator::parseSerialData()
   {
 	  if (serial->available())
@@ -119,16 +127,27 @@ Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int AD
 	  {
 		  PIDRefreshTimer -= PIDRefreshRate;
 		  M1.updateState();
-		  M2.updateState();
+		  //M2.updateState();
+		  Serial.print("M1 fb: ");
+		  Serial.print(M1.FeedBack);
+		  Serial.print(", M1 output: ");
+		  Serial.print(M1.Output);
+		  Serial.print(", M2 fb: ");
+		  Serial.print(M2.FeedBack); 
+		  Serial.print(", M2 output: ");
+		  Serial.println(M2.Output);
 	  }
   }
 
   void Simulator::adcUpdate()
   {
+	  M1.setFeedback(converter->analogRead(AnalogIn1));
+	  M2.setFeedback(converter->analogRead(AnalogIn2));
+	  /*/
 	  converter->startSynchronizedSingleRead(AnalogIn1, AnalogIn2);
 	  result = converter->readSynchronizedSingle();
 	  M1.setFeedback(result.result_adc0);
-	  M2.setFeedback(result.result_adc1);
+	  M2.setFeedback(result.result_adc1);*/
   }
 
   void Simulator::initADC()
@@ -136,6 +155,7 @@ Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int AD
 	  converter->setResolution(16);
 	  converter->setAveraging(16);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED);
+
 	  converter->setResolution(16, ADC_1);
 	  converter->setAveraging(16, ADC_1);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED, ADC_1);
@@ -145,5 +165,4 @@ Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int AD
   {
 	  this->PIDRefreshRate = rateInMS;
 	  this->PIDRefreshRateInS = (double)rateInMS / 1000.0;
-	  
   }
