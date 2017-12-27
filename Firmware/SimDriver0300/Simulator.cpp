@@ -4,7 +4,7 @@
 
 
 
-Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), M1(0, 0.05, 1, 0.001, MotorSerial), M2(1, 0.05, 1, 0.001, MotorSerial)
+Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, int ADCIn3, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), CurrentAnalogIn(ADCIn3), M1(0, 0.05, 1, 0.001, MotorSerial), M2(1, 0.05, 1, 0.001, MotorSerial)
   {
 	  this->serial = MainSerial;
 	  setPIDRefreshRate(PID_Rate);
@@ -52,6 +52,9 @@ void Simulator::begin()
 		  const char* Command = root["Cmd"];
 		  if (strcmp(Command, "getCapture") == 0) //{Cmd:getClampedSetPoint}
 		  {
+
+			  //Trigger Capture
+			  //Once finished Send data buffer
 
 		  }
 		  else if (strcmp(Command, "getBoardInfo") == 0) //{Cmd:getBoardInfo}
@@ -115,7 +118,8 @@ void Simulator::begin()
 
   void Simulator::refreshState()
   {
-	  parseSerialData();
+	  if (CaptureSate != RUNNING) parseSerialData();
+	  
 
 	  if (InputRefreshTimer >= ADC_IN_REFRESH_RATE)
 	  {
@@ -128,6 +132,20 @@ void Simulator::begin()
 		  PIDRefreshTimer -= PIDRefreshRate; 
 		  M1.updateState();
 		  M2.updateState();
+	  }
+
+
+	  if (CaptureStep > 0 && CaptureTimer >= CAPTURE_SAMPLING_RATE)
+	  {
+		  uint16_t currentStep = CAPTURE_STEPS - CaptureStep;
+		  TimeBuffer[currentStep] = CaptureTimer;
+		  OutputBuffer[currentStep] = ActiveCaptureMotor->Output;
+		  SetPointBuffer[currentStep] = (uint16_t)ActiveCaptureMotor->ClampedSetPoint;
+		  PositionBuffer[currentStep] = (uint16_t)ActiveCaptureMotor->FeedBack;
+		  CaptureTimer -= CAPTURE_SAMPLING_RATE;
+		  CaptureStep--;
+		  if (currentStep == CAPTURE_STEPS_DELAY)
+			  ActiveCaptureMotor->setTarget(CaptureTarget, CLAMPED_MODE);
 	  }
   }
 
@@ -144,11 +162,11 @@ void Simulator::begin()
 
   void Simulator::initADC()
   {
-	  converter->setResolution(16);
+	  converter->setResolution(12);
 	  converter->setAveraging(16);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED);
 
-	  converter->setResolution(16, ADC_1);
+	  converter->setResolution(12, ADC_1);
 	  converter->setAveraging(16, ADC_1);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED, ADC_1);
   }
@@ -157,4 +175,41 @@ void Simulator::begin()
   {
 	  this->PIDRefreshRate = rateInMS;
 	  this->PIDRefreshRateInS = (double)rateInMS / 1000.0;
+  }
+
+  void Simulator::newCaptureTrigger(uint16_t Target, uint8_t motorID)
+  {
+	  if (motorID == 1) ActiveCaptureMotor = &M1;
+	  else ActiveCaptureMotor = &M2;
+	  CaptureSate = TRIGGER;
+	  CaptureTarget = Target;
+	  CaptureStep = CAPTURE_STEPS;
+
+  }
+
+  void Simulator::sendCapture(uint8_t NumberOfFrames, uint8_t NumberOfPoints)
+  {
+	  for (int Frame = 0; Frame < NumberOfFrames; Frame++)
+	  {
+		  DynamicJsonBuffer jsonBuffer;
+		  JsonObject& root = jsonBuffer.createObject();
+
+		  if (Frame == 0) root["Cmd"] = "NewCapture";
+		  else root["Cmd"] = "Capture";
+
+		  root["NOfPoints"] = NumberOfPoints;
+		  root["NOfFrames"] = NumberOfFrames;
+		  root["FrameN"] = Frame + 1;
+		  JsonArray& Buffer = root.createNestedArray("Buffer");
+
+		  for (int j = 0; j < NumberOfPoints / NumberOfFrames; j++)
+		  {
+			  int Point = NumberOfPoints / NumberOfFrames*Frame + j;
+			  JsonObject& temp = Buffer.createNestedObject();
+			  temp["T"] = Point;
+			  temp["CSP"] = clamped_SetPoint[Point];
+		  }
+		  root.printTo(Serial);
+		  Serial.println();
+	  }
   }

@@ -39,6 +39,7 @@ class Motor
 	uint16_t setTarget(uint16_t setPoint, uint8_t mode); 
 	void setLimits(uint16_t High, uint16_t Low, uint16_t offset);
 
+	double ClampedSetPoint;
 
   private:
     Stream *serial;
@@ -60,7 +61,6 @@ class Motor
     double Kd;                  // * (D)erivative Tuning Parameter
 
 	//double FeedBack;     //PID Feedback Signal to compute error
-	double ClampedSetPoint;
 
     elapsedMillis PIDTimer;
     uint16_t PIDCalculationRate;
