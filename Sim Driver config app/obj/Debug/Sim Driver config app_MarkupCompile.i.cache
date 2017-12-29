@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\TE247921\Documents\GitHub\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\
+C:\Users\alexi\Documents\GitHub\TeensyXSimConfigurator\Sim Driver config app\obj\Debug\
 Sim_Driver_config_app
 none
 false
 DEBUG;TRACE
-C:\Users\TE247921\Documents\GitHub\TeensyXSimConfigurator\Sim Driver config app\App.xaml
+C:\Users\alexi\Documents\GitHub\TeensyXSimConfigurator\Sim Driver config app\App.xaml
 4879195571
 
-161471009712
-15-62034348
+16-752744179
+15-2046262511
 MainWindow.xaml;MotorDisplay.xaml;SerialConnector.xaml;xyGraph.xaml;
 
 True

@@ -61,6 +61,10 @@ void Simulator::begin()
 		  {
 			  sendBoardInfo();
 		  }
+		  else if (strcmp(Command, "SetManualSpeed") == 0) //{Cmd:SetManualSpeed,Speed:127}
+		  {
+			  M1.writeSpeed(root["Speed"]);
+		  }
 		  else if (strcmp(Command, "save") == 0) //{Cmd:save}
 		  {
 
@@ -126,14 +130,14 @@ void Simulator::begin()
 		  InputRefreshTimer -= ADC_IN_REFRESH_RATE;
 		  adcUpdate();
 	  }
-
+	  
 	  if (PIDRefreshTimer >= PIDRefreshRate)
 	  {
 		  PIDRefreshTimer -= PIDRefreshRate; 
 		  M1.updateState();
 		  M2.updateState();
 	  }
-
+	  
 
 	  if (CaptureStep > 0 && CaptureTimer >= CAPTURE_SAMPLING_RATE)
 	  {
@@ -162,11 +166,11 @@ void Simulator::begin()
 
   void Simulator::initADC()
   {
-	  converter->setResolution(12);
+	  converter->setResolution(16);
 	  converter->setAveraging(16);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED);
 
-	  converter->setResolution(12, ADC_1);
+	  converter->setResolution(16, ADC_1);
 	  converter->setAveraging(16, ADC_1);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED, ADC_1);
   }
@@ -188,7 +192,7 @@ void Simulator::begin()
   }
 
   void Simulator::sendCapture(uint8_t NumberOfFrames, uint8_t NumberOfPoints)
-  {
+  {/*
 	  for (int Frame = 0; Frame < NumberOfFrames; Frame++)
 	  {
 		  DynamicJsonBuffer jsonBuffer;
@@ -211,5 +215,5 @@ void Simulator::begin()
 		  }
 		  root.printTo(Serial);
 		  Serial.println();
-	  }
+	  }*/
   }
