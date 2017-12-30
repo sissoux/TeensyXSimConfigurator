@@ -90,6 +90,12 @@ namespace Sim_Driver_config_app
                     sendCommand(myCommand);
                     mySim.Motors.ForEach(Motor => Motor.NewPosition = false);
                 }
+                if (mySim.Motors.Exists(Motor => Motor.NewPID))
+                {
+                    Command myCommand = new Command("setMotorParameters", mySim.Motors);
+                    sendCommand(myCommand);
+                    mySim.Motors.ForEach(Motor => Motor.NewPID = false);
+                }
             }
         }
 
@@ -186,6 +192,7 @@ namespace Sim_Driver_config_app
                 mySim.BoardName = sender.BoardName;
                 mySim.FirmRevision = sender.FirmwareRevision;
                 mySim.BoardRevision = sender.BoardRevision;
+                mySim.PIDSampleTime = sender.PIDSampleTime;
             }
             catch (Exception e)
             {
@@ -263,7 +270,7 @@ namespace Sim_Driver_config_app
                         break;
 
                     case "SaveToEeprom":
-                        sendCommand(new Command("Save"));
+                        sendCommand(new Command("save"));
                         break;
 
                     case "Offset":
@@ -271,8 +278,11 @@ namespace Sim_Driver_config_app
                         ActiveMotor.Offset = ActiveMotor.TargetInt;
                         sendCommand(new Command("setMotorParameters", mySim.Motors));
                         break;
-
+                        
                     case "StepCapture":
+                        sendCommand(new Command("getMotorParameters"));
+                        break;
+                    case "SendPosition":
                         sendCommand(new Command("getMotorParameters"));
                         break;
 

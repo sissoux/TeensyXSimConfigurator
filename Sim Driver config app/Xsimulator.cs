@@ -71,16 +71,26 @@ namespace Sim_Driver_config_app
             }
         }
 
+        private string _PIDSampleTime = "";
+
+        public string PIDSampleTime
+        {
+            get { return _PIDSampleTime; }
+            set
+            {
+                if (value == _PIDSampleTime) return;
+                _PIDSampleTime = "LoopTime:" + value;
+                NotifyPropertyChanged();
+            }
+        }
+
 
         // This method is called by the Set accessor of each property.
         // The CallerMemberName attribute that is applied to the optional propertyName
         // parameter causes the property name of the caller to be substituted as an argument.
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

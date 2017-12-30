@@ -18,7 +18,7 @@ namespace Sim_Driver_config_app
                 double val = System.Convert.ToDouble(value);
                 return parameter.ToString() + (Math.Round((double)val / 655.35, 1)).ToString();
             }
-            else return (Math.Round((double)value, 2)).ToString();
+            else return (Math.Round((double)value, 3)).ToString();
 
         }
 

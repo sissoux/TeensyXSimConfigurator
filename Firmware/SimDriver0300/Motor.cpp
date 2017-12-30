@@ -122,3 +122,8 @@ void Motor::stopPID()
 {
 		PIDOn = false;
 }
+
+void Motor::setToMiddlePoint()
+{
+	this->ClampedSetPoint = this->Offset;
+}

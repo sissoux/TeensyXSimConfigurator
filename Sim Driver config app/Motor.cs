@@ -31,6 +31,7 @@ namespace Sim_Driver_config_app
             {
                 if (value == _kp) return;
                 _kp = value;
+                NewPID = true;
                 NotifyPropertyChanged();
             }
         }
@@ -43,6 +44,7 @@ namespace Sim_Driver_config_app
             {
                 if (value == _ki) return;
                 _ki = value;
+                NewPID = true;
                 NotifyPropertyChanged();
             }
         }
@@ -55,6 +57,7 @@ namespace Sim_Driver_config_app
             {
                 if (value == _kd) return;
                 _kd = value;
+                NewPID = true;
                 NotifyPropertyChanged();
             }
         }
@@ -72,6 +75,7 @@ namespace Sim_Driver_config_app
         }
 
         public bool NewPosition = false;
+        public bool NewPID = false;
 
         private UInt16 _Target = 65353/2;
         public Double Target

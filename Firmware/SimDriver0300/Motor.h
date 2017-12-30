@@ -26,8 +26,6 @@ class Motor
 
     Motor(byte id, double kp, double ki, double kd, Stream *serialPtr);
     
-    void begin();
-	void computePID(double Error);
 	void writeSpeed(int8_t speed);
 	void setFeedback(uint16_t value);
 	void updateState();
@@ -38,8 +36,17 @@ class Motor
 	void setSampleTime(double SampleTime);
 	uint16_t setTarget(uint16_t setPoint, uint8_t mode); 
 	void setLimits(uint16_t High, uint16_t Low, uint16_t offset);
+	void setToMiddlePoint();
 
 	double ClampedSetPoint;
+
+
+	double dispKp;       // * we'll hold on to the tuning parameters in user-entered
+	double dispKi;        //   format for display purposes
+	double dispKd;        //
+	uint16_t dispLL;      //
+	uint16_t dispHL;      //
+	uint16_t dispOffset;
 
   private:
     Stream *serial;
@@ -51,10 +58,6 @@ class Motor
 	int16_t Offset = 0;
 	bool PIDOn = false;
 	double SampleTimeInS;
-
-    double dispKp;       // * we'll hold on to the tuning parameters in user-entered
-    double dispKi;        //   format for display purposes
-    double dispKd;        //
 
     double Kp;                  // * (P)roportional Tuning Parameter
     double Ki;                  // * (I)ntegral Tuning Parameter

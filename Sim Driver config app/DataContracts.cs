@@ -138,6 +138,9 @@ namespace Sim_Driver_config_app
         [DataMember(Name = "BoardRev")]
         internal string BoardRevision;
 
+        [DataMember(Name = "PIDSampleTime")]
+        internal string PIDSampleTime;
+
         [DataMember(Name = "Temp")]
         internal double Temperature;
 
