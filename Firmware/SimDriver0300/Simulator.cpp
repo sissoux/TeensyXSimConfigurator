@@ -91,6 +91,12 @@ void Simulator::begin()
 		  {
 			  this->saveToEEPROM();
 		  }
+		  else if (strcmp(Command, "clearEEPROM") == 0) //{Cmd:save}
+		  {
+			  for (int i = 0; i < EEPROM.length(); i++) {
+				  EEPROM.write(i, 0);
+			  }
+		  }
 		  else if (strcmp(Command, "setMotorParameters") == 0)
 		  {
 			  M1.setLimits(root["MotorInfo"][0]["HL"], root["MotorInfo"][0]["LL"], root["MotorInfo"][0]["Offset"]);
@@ -269,29 +275,29 @@ void Simulator::begin()
   {
 	  EEPROM.write(EEPROM_START_ADDRESS , INITIALIZED_VALUE);	//Set "EEPROM Initialized"
 	  int Index = 1;
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispKp);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispKp);
 	  Index += sizeof(M1.dispKp);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispKi);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispKi);
 	  Index += sizeof(M1.dispKi);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispKd);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispKd);
 	  Index += sizeof(M1.dispKd);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispHL);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispHL);
 	  Index += sizeof(M1.dispHL);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispLL);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispLL);
 	  Index += sizeof(M1.dispLL);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M1.dispOffset);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M1.dispOffset);
 	  Index += sizeof(M1.dispOffset);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispKp);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispKp);
 	  Index += sizeof(M2.dispKp);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispKi);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispKi);
 	  Index += sizeof(M2.dispKi);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispKd);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispKd);
 	  Index += sizeof(M2.dispKd);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispHL);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispHL);
 	  Index += sizeof(M2.dispHL);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispLL);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispLL);
 	  Index += sizeof(M2.dispLL);
-	  EEPROM.write(EEPROM_START_ADDRESS + Index, M2.dispOffset);
+	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispOffset);
   }
 
   void Simulator::recallEEPROM()
@@ -299,31 +305,31 @@ void Simulator::begin()
 	  double p, i, d;
 	  uint16_t offset, HL, LL;
 	  int Index = 1;
-	  p = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index,p);
 	  Index += sizeof(M1.dispKp);
-	  i = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index,i );
 	  Index += sizeof(M1.dispKi);
-	  d = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, d);
 	  Index += sizeof(M1.dispKd);
-	  HL = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, HL);
 	  Index += sizeof(M1.dispHL);
-	  LL = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, LL);
 	  Index += sizeof(M1.dispLL);
-	  offset = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, offset);
 	  M1.setPID(p, i, d);
 	  M1.setLimits(HL, LL, offset);
 	  Index += sizeof(M1.dispOffset);
-	  p = EEPROM.read(EEPROM_START_ADDRESS + Index);
-	  Index += sizeof(M2.dispKp);
-	  i = EEPROM.read(EEPROM_START_ADDRESS + Index);
-	  Index += sizeof(M2.dispKi);
-	  d = EEPROM.read(EEPROM_START_ADDRESS + Index);
-	  Index += sizeof(M2.dispKd);
-	  HL = EEPROM.read(EEPROM_START_ADDRESS + Index);
-	  Index += sizeof(M2.dispHL);
-	  LL = EEPROM.read(EEPROM_START_ADDRESS + Index);
-	  Index += sizeof(M2.dispLL);
-	  offset = EEPROM.read(EEPROM_START_ADDRESS + Index);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, p);
+	  Index += sizeof(M1.dispKp);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, i);
+	  Index += sizeof(M1.dispKi);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, d);
+	  Index += sizeof(M1.dispKd);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, HL);
+	  Index += sizeof(M1.dispHL);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, LL);
+	  Index += sizeof(M1.dispLL);
+	  EEPROM.get(EEPROM_START_ADDRESS + Index, offset);
 	  M2.setPID(p, i, d);
 	  M2.setLimits(HL, LL, offset);
   }
