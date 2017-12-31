@@ -22,6 +22,14 @@ void setup() {
   digitalWrite(20, LOW);
   digitalWrite(STATUS_LED_PIN, HIGH);
   simulator.begin();
+  //simulator.clearEEPROM();
+  simulator.M1.setToMiddlePoint();
+  simulator.M2.setToMiddlePoint();
+
+  simulator.M1.startPID();
+  simulator.M2.startPID();
+  Serial.print("Target: ");
+  Serial.println(simulator.M1.ClampedSetPoint);
 }
 
 void loop() {

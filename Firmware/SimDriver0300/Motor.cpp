@@ -6,6 +6,7 @@ Motor::Motor(byte id, double kp, double ki, double kd, Stream *serialPtr)
 {
   serial = serialPtr;
   dispKp = kp; dispKi = ki; dispKd = kd;
+  _Id = id;
 }
 
 void Motor::updateState()
@@ -30,6 +31,11 @@ void Motor::updateState()
 		Output = (int8_t)output;
 		LastFeedback = FeedBack;
 	}
+}
+
+void Motor::writeOutput()
+{
+	this->writeSpeed(this->Output);
 }
 
 
@@ -85,6 +91,25 @@ void Motor::setLimits(uint16_t High, uint16_t Low, uint16_t Neutral)
 	_LLimit = Low;
 	Offset = (int16_t)((int32_t)Neutral - HALF_16BIT);
 }
+void Motor::setHighLimit()		//Set current position as High Limit
+{
+	uint16_t Value = (uint16_t)this->FeedBack;
+	if (Value <= HALF_16BIT) return;	//Probably not what we want
+	_HLimit = Value;
+	dispHL = Value;
+}
+void Motor::setLowLimit()
+{
+	uint16_t Value = (uint16_t)this->FeedBack;
+	if (Value >= HALF_16BIT) return;	//Probably not what we want
+	_LLimit = Value;
+	dispLL = Value;
+}
+void Motor::setOffset()
+{
+	uint16_t Value = (uint16_t)this->FeedBack;
+	Offset = (int16_t)((int32_t)Value - HALF_16BIT);	//Offset is a value to add or remove to the center point (half 16 bits)
+}
 
 void Motor::setPID(double kp, double ki, double kd)
 {
@@ -125,5 +150,5 @@ void Motor::stopPID()
 
 void Motor::setToMiddlePoint()
 {
-	this->ClampedSetPoint = this->Offset;
+	this->setTarget(HALF_16BIT, CLAMPED_MODE);
 }

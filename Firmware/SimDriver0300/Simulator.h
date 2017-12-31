@@ -22,7 +22,7 @@
 #define CAPTURE_STEPS 500
 #define CAPTURE_INIT_DELAY 1000	//ms to wait before capture (Send motor to offsetPoint, then we start the capture)
 #define CAPTURE_STEPS_DELAY 50
-#define FRAME_CAPACITY 100
+#define FRAME_CAPACITY 50
 
 #define EEPROM_START_ADDRESS 100
 #define INITIALIZED_VALUE 120
@@ -44,6 +44,7 @@ class Simulator
   void refreshState();
   void begin();
   void setPIDRefreshRate(uint16_t rateInMS);
+  void clearEEPROM();
   
 private:
 	uint8_t CaptureSate = STOPPED;
@@ -71,7 +72,7 @@ private:
 
 	uint16_t PIDRefreshRate;
 	double PIDRefreshRateInS;
-	elapsedMillis PIDRefreshTimer = 0;
+	elapsedMillis PIDRefreshTimer = 0; 
 
 	elapsedMillis InputRefreshTimer = 0;
 #define ADC_IN_REFRESH_RATE 1

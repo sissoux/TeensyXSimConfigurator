@@ -34,9 +34,13 @@ class Motor
 	void startPID();
 	void stopPID();
 	void setSampleTime(double SampleTime);
-	uint16_t setTarget(uint16_t setPoint, uint8_t mode); 
+	uint16_t setTarget(uint16_t setPoint, uint8_t mode);
 	void setLimits(uint16_t High, uint16_t Low, uint16_t offset);
+	void setHighLimit();
+	void setLowLimit();
+	void setOffset();
 	void setToMiddlePoint();
+	void writeOutput();
 
 	double ClampedSetPoint;
 
@@ -44,13 +48,15 @@ class Motor
 	double dispKp;       // * we'll hold on to the tuning parameters in user-entered
 	double dispKi;        //   format for display purposes
 	double dispKd;        //
+
 	uint16_t dispLL;      //
 	uint16_t dispHL;      //
-	uint16_t dispOffset;
+	int16_t dispOffset;
+	uint8_t _Id;
+
 
   private:
     Stream *serial;
-    uint8_t _Id;
     uint16_t _Speed;
     uint16_t _AnalogInput;
     uint16_t _LLimit = 0;
@@ -59,11 +65,10 @@ class Motor
 	bool PIDOn = false;
 	double SampleTimeInS;
 
-    double Kp;                  // * (P)roportional Tuning Parameter
-    double Ki;                  // * (I)ntegral Tuning Parameter
-    double Kd;                  // * (D)erivative Tuning Parameter
+	double Kp;                  // * (P)roportional Tuning Parameter
+	double Ki;                  // * (I)ntegral Tuning Parameter
+	double Kd;                  // * (D)erivative Tuning Parameter
 
-	//double FeedBack;     //PID Feedback Signal to compute error
 
     elapsedMillis PIDTimer;
     uint16_t PIDCalculationRate;

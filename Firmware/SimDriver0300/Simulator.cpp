@@ -4,7 +4,7 @@
 
 
 
-Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, int ADCIn3, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), CurrentAnalogIn(ADCIn3), M1(0, 0.05, 0, 0, MotorSerial), M2(1, 0.05, 0, 0, MotorSerial)
+Simulator::Simulator(Stream *MainSerial, Stream *MotorSerial, int ADCIn1, int ADCIn2, int ADCIn3, uint16_t PID_Rate) : AnalogIn1(ADCIn1), AnalogIn2(ADCIn2), CurrentAnalogIn(ADCIn3), M1(1, 2, 0, 0, MotorSerial), M2(2, 2, 0, 0, MotorSerial)
   {
 	  this->serial = MainSerial;
 	  setPIDRefreshRate(PID_Rate);
@@ -54,7 +54,7 @@ void Simulator::begin()
 		  const char* Command = root["Cmd"];
 		  if (strcmp(Command, "getCapture") == 0) //{Cmd:getClampedSetPoint}
 		  {
-
+			  newCaptureTrigger(50000, 1);
 			  //Trigger Capture
 			  //Once finished Send data buffer
 
@@ -65,13 +65,13 @@ void Simulator::begin()
 		  }
 		  else if (strcmp(Command, "setPosition") == 0) //{Cmd:setPosition}
 		  {
-			  M1.setTarget(root["MotorInfo"][0]["Target"], CLAMPED_MODE);
-			  M2.setTarget(root["MotorInfo"][1]["Target"], CLAMPED_MODE);
+			  M1.setTarget(root["MotorInfo"][0]["target"], CLAMPED_MODE);
+			  M2.setTarget(root["MotorInfo"][1]["target"], CLAMPED_MODE);
 		  }
-		  else if (strcmp(Command, "setPosition") == 0) //{Cmd:setPosition}
+		  else if (strcmp(Command, "XSIMPos") == 0) //{Cmd:setPosition}
 		  {
-			  M1.setTarget(root["MotorInfo"][0]["Target"], CLAMPED_MODE);
-			  M2.setTarget(root["MotorInfo"][1]["Target"], CLAMPED_MODE);
+			  M1.setTarget(root["M1"], CLAMPED_MODE);
+			  M2.setTarget(root["M2"], CLAMPED_MODE);
 		  }
 		  else if (strcmp(Command, "StartSim") == 0) //{Cmd:StartSim}
 		  {
@@ -93,20 +93,70 @@ void Simulator::begin()
 		  }
 		  else if (strcmp(Command, "clearEEPROM") == 0) //{Cmd:save}
 		  {
-			  for (int i = 0; i < EEPROM.length(); i++) {
-				  EEPROM.write(i, 0);
-			  }
+			  this->clearEEPROM();
 		  }
 		  else if (strcmp(Command, "setMotorParameters") == 0)
 		  {
-			  M1.setLimits(root["MotorInfo"][0]["HL"], root["MotorInfo"][0]["LL"], root["MotorInfo"][0]["Offset"]);
 			  M1.setPID(root["MotorInfo"][0]["kp"], root["MotorInfo"][0]["ki"], root["MotorInfo"][0]["kd"]);
-			  M2.setLimits(root["MotorInfo"][1]["HL"], root["MotorInfo"][1]["LL"], root["MotorInfo"][1]["Offset"]);
 			  M2.setPID(root["MotorInfo"][1]["kp"], root["MotorInfo"][1]["ki"], root["MotorInfo"][1]["kd"]);
+		  }
+		  else if (strcmp(Command, "setHL") == 0)
+		  {
+			  int motorID = root["MotorInfo"][0]["ID"];
+			  switch (motorID)
+			  {
+			  case 1:
+				  M1.setHighLimit();
+				  break;
+			  case 2:
+				  M2.setHighLimit();
+				  break;
+			  default:
+				  break;
+			  }
+		  }
+		  else if (strcmp(Command, "setLL") == 0)
+		  {
+			  int motorID = root["MotorInfo"][0]["ID"];
+			  switch (motorID)
+			  {
+			  case 1:
+				  M1.setLowLimit();
+				  break;
+			  case 2:
+				  M2.setLowLimit();
+				  break;
+			  default:
+				  break;
+			  }
+		  }
+		  else if (strcmp(Command, "setOffset") == 0)
+		  {
+			  int motorID = root["MotorInfo"][0]["ID"];
+			  switch (motorID)
+			  {
+			  case 1:
+				  M1.setOffset();
+				  break;
+			  case 2:
+				  M2.setOffset();
+				  break;
+			  default:
+				  break;
+			  }
+		  }
+		  else if (strcmp(Command, "resetLimits") == 0)
+		  {
+			  M1.setLimits(65535, 0, HALF_16BIT);
+			  M2.setLimits(65535, 0, HALF_16BIT);
 		  }
 		  else if (strcmp(Command, "getMotorParameters") == 0)
 		  {
 			  sendMotorInfo();
+		  }
+		  else if (strcmp(Command, "getPosition") == 0)
+		  {
+			  Serial.println(M1.FeedBack);
 		  }
 	  }
   }
@@ -171,16 +221,18 @@ void Simulator::begin()
 
 	  if (PIDRefreshTimer >= PIDRefreshRate)
 	  {
-		  PIDRefreshTimer -= PIDRefreshRate; 
+		  PIDRefreshTimer -= PIDRefreshRate;
 		  M1.updateState();
 		  M2.updateState();
+		  M1.writeOutput();
+		  M2.writeOutput();
 	  }
 
 
 	  if (CaptureSate == RUNNING && CaptureStep > 0 && CaptureTimer >= CAPTURE_SAMPLING_RATE)
 	  {
 		  uint16_t currentStep = CAPTURE_STEPS - CaptureStep;
-		  TimeBuffer[currentStep] = CaptureTimer;
+		  TimeBuffer[currentStep] = currentStep*CAPTURE_SAMPLING_RATE;
 		  OutputBuffer[currentStep] = ActiveCaptureMotor->Output;
 		  SetPointBuffer[currentStep] = (uint16_t)ActiveCaptureMotor->ClampedSetPoint;
 		  PositionBuffer[currentStep] = (uint16_t)ActiveCaptureMotor->FeedBack;
@@ -192,11 +244,14 @@ void Simulator::begin()
 	  else if (CaptureSate == INIT && CaptureTimer >= CAPTURE_INIT_DELAY)	//We wait some time for the motor to reach middle point, once done we launch the capture sequence
 	  {
 		  CaptureTimer = 0;
-		  CaptureSate == RUNNING;
+		  CaptureSate = RUNNING;
+		  digitalWrite(13, LOW);
 	  }
-	  else if (CaptureSate == RUNNING && CaptureSate == 0)	//Capture is finished, time to send buffers
+	  else if (CaptureSate == RUNNING && CaptureStep == 0)	//Capture is finished, time to send buffers
 	  {
-		  //sendCapture(, )
+		  CaptureSate = STOPPED;
+		  digitalWrite(13, HIGH);
+		  sendCapture(CAPTURE_STEPS);
 	  }
   }
 
@@ -213,11 +268,11 @@ void Simulator::begin()
 
   void Simulator::initADC()
   {
-	  converter->setResolution(12);
+	  converter->setResolution(16);
 	  converter->setAveraging(16);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED);
 
-	  converter->setResolution(12, ADC_1);
+	  converter->setResolution(16, ADC_1);
 	  converter->setAveraging(16, ADC_1);
 	  converter->setConversionSpeed(ADC_CONVERSION_SPEED::MED_SPEED, ADC_1);
   }
@@ -242,7 +297,7 @@ void Simulator::begin()
   }
 
   void Simulator::sendCapture(uint16_t NumberOfPoints)
-  {/*
+  {
 	  uint8_t NumberOfFrames = (NumberOfPoints - 1) / FRAME_CAPACITY +1;	//Create enough Frames to send all data
 
 	  for (int Frame = 0; Frame < NumberOfFrames; Frame++)
@@ -260,15 +315,17 @@ void Simulator::begin()
 
 		  for (int j = 0; j < FRAME_CAPACITY; j++)
 		  {
-			  uint16_t CurrentPoint = j + Frame * FRAME_CAPACITY;
-			  if (j >= NumberOfPoints) break;
-			  JsonObject& temp = Buffer.createNestedObject();
-			  temp["T"] = CurrentPoint;
-			  temp["CSP"] = clamped_SetPoint[Point];
+			 uint16_t CurrentPoint = j + Frame * FRAME_CAPACITY;
+			 if (j >= NumberOfPoints) break;
+				JsonObject& temp = Buffer.createNestedObject();
+				temp["T"] = TimeBuffer[CurrentPoint];
+				temp["CSP"] = SetPointBuffer[CurrentPoint];
+				  temp["RawPos"] = PositionBuffer[CurrentPoint];
+				  temp["Out"] = OutputBuffer[CurrentPoint];
 		  }
 		  root.printTo(Serial);
 		  Serial.println();
-	  }*/
+	  }
   }
 
   void Simulator::saveToEEPROM()
@@ -299,7 +356,12 @@ void Simulator::begin()
 	  Index += sizeof(M2.dispLL);
 	  EEPROM.put(EEPROM_START_ADDRESS + Index, M2.dispOffset);
   }
-
+  void Simulator::clearEEPROM()
+  {
+	  for (int i = 0; i < EEPROM.length(); i++) {
+		  EEPROM.write(i, 0);
+	  }
+  }
   void Simulator::recallEEPROM()
   {
 	  double p, i, d;

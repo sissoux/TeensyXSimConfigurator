@@ -48,7 +48,12 @@ namespace Sim_Driver_config_app
                     MotorInfoList[i].Offset = MotorList[i].Offset;
                 }*/
             }
-            
+
+        }
+        public Command(string Cmd, Motor motor)
+        {
+            this.Cmd = Cmd;
+            this.MotorInfoList.Add(new MotorInfo(motor));
         }
     }
 
@@ -108,6 +113,7 @@ namespace Sim_Driver_config_app
             this.HighLimit = m.HighLimit;
             this.LowLimit = m.LowLimit;
             this.Offset = m.Offset;
+            this.target = Convert.ToUInt16(m.Target);
         }
         public MotorInfo()
         {

@@ -86,14 +86,12 @@ namespace Sim_Driver_config_app
             {
                 if (mySim.Motors.Exists(Motor => Motor.NewPosition))
                 {
-                    Command myCommand = new Command("setPosition");
-                    sendCommand(myCommand);
+                    sendCommand(new Command("setPosition", mySim.Motors));
                     mySim.Motors.ForEach(Motor => Motor.NewPosition = false);
                 }
                 if (mySim.Motors.Exists(Motor => Motor.NewPID))
                 {
-                    Command myCommand = new Command("setMotorParameters", mySim.Motors);
-                    sendCommand(myCommand);
+                    sendCommand(new Command("setMotorParameters", mySim.Motors));
                     mySim.Motors.ForEach(Motor => Motor.NewPID = false);
                 }
             }
@@ -229,14 +227,15 @@ namespace Sim_Driver_config_app
             series.Add(new PointCollection(DataToDisplay.Count));
             foreach (var value in DataToDisplay)
             {
-                //series[0].Add(new Point(0, value.Output));
-                //series[1].Add(new Point(0, value.RawPosition));
+                series[0].Add(new Point(0, value.Output));
+                series[1].Add(new Point(0, value.RawPosition));
                 series[2].Add(new Point(0, value.ClampedSetPoint));
+                
             }
             MyXYGraph.cleanGraph();
             //MyXYGraph.addToGraph(series[0]);
-            //MyXYGraph.addToGraph(series[1]);
-            MyXYGraph.addToGraph(series[2]);
+            MyXYGraph.addToGraph(series[1]);
+            //MyXYGraph.addToGraph(series[2]);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -256,13 +255,13 @@ namespace Sim_Driver_config_app
                     case "HL":
                         ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.HighLimit = ActiveMotor.TargetInt;
-                        sendCommand(new Command("setMotorParameters", mySim.Motors));
+                        sendCommand(new Command("setHL", ActiveMotor));
                         break;
 
                     case "LL":
                         ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.LowLimit = ActiveMotor.TargetInt;
-                        sendCommand(new Command("setMotorParameters", mySim.Motors));
+                        sendCommand(new Command("setLL", ActiveMotor));
                         break;
 
                     case "SaveToFile":
@@ -276,14 +275,14 @@ namespace Sim_Driver_config_app
                     case "Offset":
                         ActiveMotor = ((Motor)button.DataContext);
                         ActiveMotor.Offset = ActiveMotor.TargetInt;
-                        sendCommand(new Command("setMotorParameters", mySim.Motors));
+                        sendCommand(new Command("setOffset", ActiveMotor));
                         break;
                         
                     case "StepCapture":
-                        sendCommand(new Command("getMotorParameters"));
+                        sendCommand(new Command("getCapture"));
                         break;
                     case "SendPosition":
-                        sendCommand(new Command("getMotorParameters"));
+                        sendCommand(new Command("setPosition", mySim.Motors));
                         break;
 
                     default:
