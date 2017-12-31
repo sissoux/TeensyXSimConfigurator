@@ -10,9 +10,9 @@
     <Window.Resources>
         <local:SliderConverter x:Key="SliderConv"/>
         <System:Double x:Key="SliderHeight">100</System:Double>
-        <System:Double x:Key="kpMax">100</System:Double>
-        <System:Double x:Key="kiMax">100</System:Double>
-        <System:Double x:Key="kdMax">100</System:Double>
+        <System:Double x:Key="kpMax">20</System:Double>
+        <System:Double x:Key="kiMax">30</System:Double>
+        <System:Double x:Key="kdMax">1</System:Double>
         <System:String x:Key="StepResponseToolTip">Go center (Offset Value) and exectute step response capture to SetPoint value.</System:String>
     </Window.Resources>
     <Grid Background="LightGray">

@@ -375,7 +375,7 @@ vm.last.preproc.file.3.lineend=674
 vm.last.preproc.file.3.prefix_lines=0
 vm.last.preproc.file.4.file=Simulator.h
 vm.last.preproc.file.4.offset=0
-vm.last.preproc.file.4.length=1930
+vm.last.preproc.file.4.length=1928
 vm.last.preproc.file.4.linecount=83
 vm.last.preproc.file.4.linestart=674
 vm.last.preproc.file.4.lineend=757
@@ -387,7 +387,7 @@ runtime.vm.ide.platforms.path=C:\Program Files (x86)\Microsoft Visual Studio\201
 build.variant.path=
 archive_file=core.a
 archive_file_path=C:\Temp\VMBuilds\SimDriver0300\teensy31\Release\core.a
-extra.time.local=51696172
+extra.time.local=53537553
 tools.ctags.path={runtime.tools.ctags.path}
 tools.ctags.cmd.path={path}/ctags
 tools.ctags.pattern="{cmd.path}" -u --language-force=c++ -f - --c++-kinds=svpf --fields=KSTtzns --line-directives "{source_file}"

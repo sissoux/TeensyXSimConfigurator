@@ -18,11 +18,11 @@
 #define INIT 1
 #define RUNNING 2
 #define READY 3
-#define CAPTURE_SAMPLING_RATE 5	//Capture State each 10ms
+#define CAPTURE_SAMPLING_RATE 3	//Capture State each 3
 #define CAPTURE_STEPS 500
 #define CAPTURE_INIT_DELAY 1000	//ms to wait before capture (Send motor to offsetPoint, then we start the capture)
 #define CAPTURE_STEPS_DELAY 50
-#define FRAME_CAPACITY 50
+#define FRAME_CAPACITY 100
 
 #define EEPROM_START_ADDRESS 100
 #define INITIALIZED_VALUE 120

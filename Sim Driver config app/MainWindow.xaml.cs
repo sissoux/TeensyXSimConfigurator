@@ -57,6 +57,8 @@ namespace Sim_Driver_config_app
             var interval = TimeSpan.FromMilliseconds(100);
             RunPeriodicAsync(OnTick, dueTime, interval, CancellationToken.None);
 
+            SerialBuffer.Capacity = 10;
+
         }
 
         private void OnTick()
@@ -235,7 +237,7 @@ namespace Sim_Driver_config_app
             MyXYGraph.cleanGraph();
             //MyXYGraph.addToGraph(series[0]);
             MyXYGraph.addToGraph(series[1]);
-            //MyXYGraph.addToGraph(series[2]);
+            MyXYGraph.addToGraph(series[2]);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

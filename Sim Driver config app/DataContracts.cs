@@ -67,7 +67,7 @@ namespace Sim_Driver_config_app
         internal UInt16 RawPosition;
 
         [DataMember(Name ="Out") ]
-        internal byte Output;
+        internal Int16 Output;
 
         [DataMember(Name ="CSP") ]
         internal UInt16 ClampedSetPoint;
