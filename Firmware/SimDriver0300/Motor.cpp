@@ -88,7 +88,9 @@ uint16_t Motor::setTarget(uint16_t setPoint, uint8_t mode)
 void Motor::setLimits(uint16_t High, uint16_t Low, uint16_t Neutral)
 {
 	_HLimit = High;
+	dispHL = High;
 	_LLimit = Low;
+	dispLL = Low;
 	Offset = (int16_t)((int32_t)Neutral - HALF_16BIT);
 }
 void Motor::setHighLimit()		//Set current position as High Limit
