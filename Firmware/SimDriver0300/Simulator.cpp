@@ -39,7 +39,7 @@ void Simulator::begin()
 			  }
 			  if (Serial.available())
 			  {
-				  lastChar = Serial.read();
+				  lastChar = serial->read();
 				  input[i] = lastChar;
 				  i++;
 			  }
